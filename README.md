@@ -7,5 +7,5 @@ Welcome to Flame, the editor that CodeTorch uses for its code editor. Flame is a
 To install Flame, do the following:
 
 1. Clone the repository: `git clone https://github.com/CodeTorchNET/Flame-Code-Editor/tree/main`
-2. copy the `src` folder to your project (example to `acache` or a `LAMP` stack)
+2. copy the `src` folder to your project (example to an `acache` server or a `LAMP` stack)
 3. THAT'S IT!!!! Enjoy Flame!
