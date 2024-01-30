@@ -21,7 +21,6 @@ class TopBar {
             if (this._data.filesKnown.indexOf(icon_name) != -1) {
                 var element = document.createElement("div");
                 var icon = document.createElement("img");
-                console.log(icon_name, this._data.filesKnown.indexOf(icon_name))
                 icon.src = "/assets/" + this._data.fileIcons[icon_name];
                 icon.className = "icon";
                 element.appendChild(icon);
@@ -45,7 +44,6 @@ class TopBar {
                     } else if (element.previousSibling != null) {
                         nextActive = element.previousSibling;
                     }
-                    console.log(nextActive.id)
                     //set next active element
                     if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
                         ParentThis.setActive(nextActive.id);
@@ -93,11 +91,24 @@ class TopBar {
                 element.addEventListener('click', function () {
                     this.setActive(element.id);
                 }.bind(this));
+                element.addEventListener('mouseover', function () {
+                    //check if active
+                    if (!(element.classList.contains("active"))) {
+                        i.style.visibility = "visible";
+                    }
+                })
+                element.addEventListener('mouseout', function () {
+                    if (!(element.classList.contains("active"))) {
+                    i.style.visibility = "hidden";
+                    }
+                })
                 this._data.currID++;
                 this._data.target.appendChild(element);
                 //if active doesn't exist than set this tab as active
                 if (this._data.activeElement == null) {
                     this.setActive(element.id);
+                }else{
+                    i.style.visibility = "hidden";
                 }
                 return element.id;
             } else {
