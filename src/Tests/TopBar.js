@@ -6,8 +6,10 @@ class TopBar {
             } else if (typeof el == 'object') {
                 new Sortable(el, {
                     animation: 150,
-                    chosenClass: "active",
                     draggable: ".Tab",
+                    onChoose: function (evt) {
+                        this.setActive(evt.item.id);
+                    }.bind(this),
                 });
                 this._data.target = el
             } else {
@@ -35,11 +37,32 @@ class TopBar {
                 } else {
                     i.innerHTML = this._data.crossedSVG;
                 }
+                function calculateNextActive(ParentThis) {
+                    //calculate next active element
+                    var nextActive = null;
+                    if (element.nextSibling != null) {
+                        nextActive = element.nextSibling;
+                    } else if (element.previousSibling != null) {
+                        nextActive = element.previousSibling;
+                    }
+                    console.log(nextActive.id)
+                    //set next active element
+                    if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
+                        ParentThis.setActive(nextActive.id);
+                    } else {
+                        ParentThis._data.activeElement = null;
+                    }
+                }
+
                 function internalEvents(ParentThis) {
                     const target = ParentThis._data.target;
                     const editedSVG = ParentThis._data.editedSVG;
                     const crossedSVG = ParentThis._data.crossedSVG;
                     i.children[0].addEventListener("click", function () {
+                        //check if current tab is active
+                        if (element.classList.contains("active")) {
+                            calculateNextActive(ParentThis);
+                        }
                         element.remove();
                         target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
                     })
@@ -56,16 +79,19 @@ class TopBar {
                         }
                     });
                     i.children[0].addEventListener('mouseup', function () {
+                        //check if current tab is active
+                        if (element.classList.contains("active")) {
+                            calculateNextActive(ParentThis);
+                        }
                         element.remove();
                         target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
                     });
                 }
                 internalEvents(this);
                 element.appendChild(i);
-                element.id = this._data.currID;
+                element.id = 'TopBarTab' + this._data.currID;
                 element.addEventListener('click', function () {
                     this.setActive(element.id);
-                    this._data.target.dispatchEvent(new CustomEvent('ActivetabChanged', { detail: { id: element.id } }));
                 }.bind(this));
                 this._data.currID++;
                 this._data.target.appendChild(element);
@@ -84,6 +110,7 @@ class TopBar {
             }
             this._data.target.children[id].classList.add("active");
             this._data.activeElement = id;
+            this._data.target.dispatchEvent(new CustomEvent('tabChanged', { detail: { id: id } }));
         }
         //internal data
         this._data = {
