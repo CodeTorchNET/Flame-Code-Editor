@@ -3,6 +3,9 @@
   --text-primary-selected: #fff;
   --main-background: #1f1f1f;
   --main-background-border: #181818;
+  --main-hover: #a8a8a822;
+  --border-selected: #145282;
+  --border: #242424;
 }
 body {
   margin: 0px;
@@ -16,6 +19,8 @@ body {
   background-color: var(--main-background-border);
   display: flex;
   overflow-x: scroll;
+  border-bottom: 1px var(--border) solid;
+  border-top: 1px var(--border) solid;
 }
 
 .topMenu .Tab {
@@ -25,13 +30,23 @@ body {
   padding-right: 10px;
   background-color: var(--main-background-border);
   display: flex;
-  border-right: 2px var(--main-background) solid;
+  border-right: 1px var(--border) solid;
+  transition: transform 120ms ease-in-out;
 }
 
 /* Top Menu and has active */
 .topMenu .Tab.active {
   background-color: var(--main-background) !important;
+  border-top: 1px var(--border-selected) solid;
+  border-right: 1px var(--border) solid;
 }
+
+.topMenu .Tab.active img,
+.topMenu .Tab.active p,
+.topMenu .Tab.active div {
+  padding-bottom: 2px;
+}
+
 
 .topMenu .Tab p {
   width: fit-content;
@@ -79,4 +94,14 @@ body {
   border-radius: 50%;
   margin: auto;
   margin-top: 4px;
+}
+
+/* hover */
+.topMenu .Tab .actions:hover {
+  background-color: var(--main-hover);
+  border-radius: 5px;
+}
+
+.topMenu {
+  cursor: pointer;
 }
