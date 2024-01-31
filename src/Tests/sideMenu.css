@@ -55,6 +55,7 @@ body {
 .sideMenu .itemParent.active > .itemSubContent {
     visibility: visible;
     height: auto;
+    margin-top: 0px;
 }
 
 .sideMenu .itemSubContent {
@@ -67,5 +68,5 @@ body {
 }
 
 .sideMenu .itemSubContent .item img {
-    margin-left: 13px;
+    margin-left: 3px;
 }
