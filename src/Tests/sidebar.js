@@ -30,13 +30,16 @@ class Sidebar {
                 div.children[0].addEventListener('click', function () {
                     if (div.className == "itemParent active") {
                         div.className = "itemParent";
-                        //close all children inifinite depth
-                        var children = div.children[1].children;
-                        for (var i = 0; i < children.length; i++) {
-                            if (children[i].className == "itemParent active") {
-                                children[i].className = "itemParent";
+                        //close all children infinite depth
+                        function cleanUpChildren(parent) {
+                            for (var i = 0; i < parent.children.length; i++) {
+                                if (parent.children[i].className == "itemParent active") {
+                                    parent.children[i].className = "itemParent";
+                                    cleanUpChildren(parent.children[i].children[1]);
+                                }
                             }
                         }
+                        cleanUpChildren(div.children[1]);
                     } else {
                         div.className = "itemParent active";
                     }
