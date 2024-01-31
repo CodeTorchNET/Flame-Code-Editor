@@ -70,3 +70,16 @@ body {
 .sideMenu .itemSubContent .item img {
     margin-left: 3px;
 }
+
+.rightClick{
+    width: fit-content;background-color: var(--main-background);position: absolute;top: 0px;padding: 10px;padding-top: 5px;padding-bottom: 5px;border-radius: 8px;
+}
+.rightClick .rename{
+    display: flex;margin-top: 10px;cursor: pointer;
+}
+.rightClick .delete{
+    display: flex;margin-top: 10px;margin-bottom: 10px;cursor: pointer;
+}
+.rightClick .delete p{
+    width: 100%;text-align: center;margin: 0px;
+}
