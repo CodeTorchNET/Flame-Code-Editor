@@ -63,6 +63,7 @@ body {
     border-left: 1px solid var(--linedown-color);
     visibility: hidden;
     height: 0px;
+    margin-top: -5px;
 }
 
 .sideMenu .itemSubContent .item img {
