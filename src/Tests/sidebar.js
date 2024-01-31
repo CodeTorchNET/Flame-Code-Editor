@@ -27,6 +27,20 @@ class Sidebar {
             </div>
             <div id="itemSubContent`+ div.id + `" class="itemSubContent">
             </div>`
+                div.children[0].addEventListener('click', function () {
+                    if (div.className == "itemParent active") {
+                        div.className = "itemParent";
+                        //close all children inifinite depth
+                        var children = div.children[1].children;
+                        for (var i = 0; i < children.length; i++) {
+                            if (children[i].className == "itemParent active") {
+                                children[i].className = "itemParent";
+                            }
+                        }
+                    } else {
+                        div.className = "itemParent active";
+                    }
+                })
                 //add to current files
                 var fileData = {
                     name: name,
