@@ -1,9 +1,7 @@
 //instead of looping through whole HTML at parent itemSubContent then look (each element is known by itemSubContent id)
 
 //open event
-//delete event
-//right click menu - including rename and delete
-// don't allow double naming - on create/rename -!!!!
+// don't allow double naming - on create/rename -!!!! - rename done
 //rename folder all heirarchy changes
 //update icon on rename
 //custom events for rename delete, etc
@@ -37,7 +35,8 @@ class Sidebar {
                 if (name.includes('/') || name.includes('.') || name.includes(' ')) {
                     throw new Error("Folder names can't contain / or .")
                 }
-                //check if folder name exists at current depth - FUTURE
+                //check if folder name already taken
+
                 var div = document.createElement('div');
                 div.className = "itemParent";
                 div.id = 'sidebar' + this._data.currID;
@@ -81,12 +80,18 @@ class Sidebar {
                 }
                 path = this._handlePaths(path);
                 if (path.length == 0) {
+                    //check if file name already taken
+                    for (var i = 0; i < this._data.currentFiles.length; i++) {
+                        if (this._data.currentFiles[i].name == name && this._data.currentFiles[i].type == 'folder') {
+                            throw new Error("Folder name already taken")
+                        }
+                    }
                     //add to base current files
                     this._data.currentFiles.push(fileData);
                     this._data.target.appendChild(div);
                 } else {
                     //add to current depth
-                    var id = this.handlePaths(path, fileData);
+                    var id = this.handlePaths(path, fileData,'folder');
                     //append to target
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
@@ -120,12 +125,25 @@ class Sidebar {
                     path = this._handlePaths(path);
                     //add right click menu
                     this._rightClick(div);
+                    //add click action
+                    div.addEventListener('click', function () {
+                        //dispatch event
+                        //add active class
+                        this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path.join('/') + '/' + name } }));
+                    })
+
                     if (path.length == 0) {
+                        //check if file name already taken
+                        for (var i = 0; i < this._data.currentFiles.length; i++) {
+                            if (this._data.currentFiles[i].name == name && this._data.currentFiles[i].type == 'file') {
+                                throw new Error("File name already taken")
+                            }
+                        }
                         //add to base current files
                         this._data.currentFiles.push(fileData);
                         //append to target
                         this._data.target.appendChild(div);
-                    } else {
+                    } else {                        
                         //add to current depth
                         var id = this.handlePaths(path, fileData);
                         //append to target
@@ -145,7 +163,7 @@ class Sidebar {
             this._handlePaths = function (path) {
                 return path.split('/').filter(element => element !== "");
             },
-            this.handlePaths = function (path, appendedData) {
+            this.handlePaths = function (path, appendedData, type = 'file') {
                 //expect array
                 if (appendedData == undefined) {
                     throw new Error("No appended data provided")
@@ -170,6 +188,13 @@ class Sidebar {
                     }
                     currentDepthID = currentDepth[index].id;
                     currentDepth = currentDepth[index].children;
+                }
+                //check if file name already taken
+                for (var i = 0; i < currentDepth.length; i++) {
+                    console.log(currentDepth[i].name, appendedData.name, currentDepth[i].type, type)
+                    if (currentDepth[i].name == appendedData.name && ((currentDepth[i].type == 'file' && type == 'file') || (currentDepth[i].type == 'folder' && type == 'folder'))) {
+                        throw new Error("File name already taken")
+                    }
                 }
                 //add to current depth
                 currentDepth.push(appendedData);
@@ -373,7 +398,14 @@ class Sidebar {
                 if (path.length == 0) {
                     if (fileName.includes('.')) {
                         parent.children[childNumber].children[1].innerHTML = newName;
-                    } else {
+                        //change icon
+                        if(this._data.fileIcons[newName.split('.')[1]] != undefined){
+                        parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
+                        }else{
+                            parent.children[childNumber].children[0].src = "/assets/text.svg";
+                        }
+                        console.log(parent.children[childNumber].children[0].src)
+                        } else {
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 } else {
