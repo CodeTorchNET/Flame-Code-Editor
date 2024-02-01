@@ -250,7 +250,32 @@ class Sidebar {
                         input.focus();
                     }.bind(this));
                     div.children[1].addEventListener('click', function () {
-                    });
+                        //remove popup
+                        div.remove();
+                        //find parent and calculate path
+                        var currentCalculatedPath = [];
+                        var parent = element.parentNode;
+                        while (parent.id != 'sideMenu') {
+                            if (parent.className.includes('itemParent')) {
+                                currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                            }
+                            parent = parent.parentNode;
+                        }
+                        currentCalculatedPath.reverse();
+                        //join path
+                        currentCalculatedPath = currentCalculatedPath.join('/');
+                        //check if file or folder
+                        if (element.className.includes('file')) {
+                            //add name to end of path
+                            currentCalculatedPath += '/' + element.children[1].innerHTML;
+                        } else {
+                            currentCalculatedPath = '/' + currentCalculatedPath + '/';
+                        }
+                        //dispatch event
+                        this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
+                        //remove file
+                        this.deleteFile(currentCalculatedPath);
+                    }.bind(this));
                     div.addEventListener('contextmenu', function (e) {
                         e.preventDefault();
                     });
