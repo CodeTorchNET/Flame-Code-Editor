@@ -5,10 +5,11 @@
 //right click menu - including rename and delete
 // don't allow double naming - on create/rename -!!!!
 //rename folder all heirarchy changes
+//update icon on rename
+//custom events for rename delete, etc
 
 //top bar add edit thing - remove edit thing
 //close tab manually
-
 
 class Sidebar {
     constructor() {
@@ -227,38 +228,17 @@ class Sidebar {
                         var oldText = input.value;
                         input.addEventListener('keydown', function (e) {
                             if (e.key == 'Enter') {
-                                //check if name is already taken
-                                var currentDepth = this._data.currentFiles;
-                                var currentDepthID = this._data.target.id;
-                                function findInArray(array, name) {
-                                    for (var i = 0; i < array.length; i++) {
-                                        if (array[i].name == name) {
-                                            return i;
-                                        }
-                                    }
-                                    return -1;
-                                }
-                                var path = this._handlePaths(currentCalculatedPath);
-                                for (var i = 0; i < path.length; i++) {
-                                    var index = findInArray(currentDepth, path[i]);
-                                    if (index == -1) {
-                                        throw new Error("Path not found")
-                                    }
-                                    currentDepthID = currentDepth[index].id;
-                                }
-                                var childNumber = -1;
-                                for (var i = 0; i < currentDepth.length; i++) {
-                                    if (currentDepth[i].name == input.value) {
-                                        childNumber = i;
-                                    }
-                                }
-                                if (childNumber != -1) {
-                                    throw new Error("Name already taken")
-                                }
+                                //check if any difference in name
+                                if (input.value == oldText) {
+                                    //remove input and add p
+                                    element.children[1].outerHTML = '<p>' + input.value + '</p>';
+                                    return;
+                                }else{
                                 //rename file
                                 this.renameFile(currentCalculatedPath, input.value);
                                 //remove input and add p
                                 element.children[1].outerHTML = '<p>' + input.value + '</p>';
+                                }
                             }
                         }.bind(this))
                         input.addEventListener('blur', function () {
@@ -350,6 +330,12 @@ class Sidebar {
                     currentDepthID = currentDepth[index].id;
                     currentDepth = currentDepth[index].children;
                 }
+                //check if name is already taken
+                for(var i = 0; i < currentDepth.length; i++){
+                    if(currentDepth[i].name == newName && ((currentDepth[i].type == 'file' && fileName.includes('.'))||(currentDepth[i].type == 'folder' && !fileName.includes('.'))) ){
+                        throw new Error("Name already taken")
+                    }
+                }
                 var childNumber = -1;
                 for (var i = 0; i < currentDepth.length; i++) {
                     if (currentDepth[i].name == fileName) {
@@ -372,6 +358,8 @@ class Sidebar {
                         parent.children[1].children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 }
+                console.log({ id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName })
+                this._data.target.dispatchEvent(new CustomEvent('fileRenamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName } }));
             },
             //internal data
             this._data = {
