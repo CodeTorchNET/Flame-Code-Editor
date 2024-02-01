@@ -1,4 +1,15 @@
 //instead of looping through whole HTML at parent itemSubContent then look (each element is known by itemSubContent id)
+
+//open event
+//delete event
+//right click menu - including rename and delete
+// don't allow double naming - on create/rename -!!!!
+//rename folder all heirarchy changes
+
+//top bar add edit thing - remove edit thing
+//close tab manually
+
+
 class Sidebar {
     constructor() {
         this.init = function (el) {
@@ -22,7 +33,7 @@ class Sidebar {
         }
         this.add = function (path, name, type = 'folder', icon_name) {
             if (type == 'folder') {
-                if(name.includes('/') || name.includes('.')){
+                if (name.includes('/') || name.includes('.') || name.includes(' ')) {
                     throw new Error("Folder names can't contain / or .")
                 }
                 //check if folder name exists at current depth - FUTURE
@@ -83,7 +94,7 @@ class Sidebar {
                 return div.id;
 
             } else if (type == 'file') {
-                if(name.includes('/')){
+                if (name.includes('/') || name.includes(' ')) {
                     throw new Error("File names can't contain /")
                 }
                 if (this._data.filesKnown.indexOf(icon_name) != -1) {
@@ -120,6 +131,8 @@ class Sidebar {
                         var parent = document.getElementById(id);
                         parent.children[1].appendChild(div);
                     }
+                    //dispatch event
+                    this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id } }));
                     return div.id;
                 } else {
                     throw new Error("Unknown icon name")
@@ -186,10 +199,77 @@ class Sidebar {
                         <p>Delete</p>
                     </div>`;
                     div.children[0].addEventListener('click', function () {
-                        console.log('rename')
-                    });
+                        //remove popup
+                        div.remove();
+                        //find parent and calculate path
+                        var currentCalculatedPath = [];
+                        var parent = element.parentNode;
+                        while (parent.id != 'sideMenu') {
+                            if (parent.className.includes('itemParent')) {
+                                currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                            }
+                            parent = parent.parentNode;
+                        }
+                        currentCalculatedPath.reverse();
+                        //join path
+                        currentCalculatedPath = currentCalculatedPath.join('/');
+                        //check if file or folder
+                        if (element.className.includes('file')) {
+                            //add name to end of path
+                            currentCalculatedPath += '/' + element.children[1].innerHTML;
+                        } else {
+                            currentCalculatedPath = '/' + currentCalculatedPath + '/';
+                        }
+                        //replace p with input
+                        var input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = element.children[1].innerHTML;
+                        var oldText = input.value;
+                        input.addEventListener('keydown', function (e) {
+                            if (e.key == 'Enter') {
+                                //check if name is already taken
+                                var currentDepth = this._data.currentFiles;
+                                var currentDepthID = this._data.target.id;
+                                function findInArray(array, name) {
+                                    for (var i = 0; i < array.length; i++) {
+                                        if (array[i].name == name) {
+                                            return i;
+                                        }
+                                    }
+                                    return -1;
+                                }
+                                var path = this._handlePaths(currentCalculatedPath);
+                                for (var i = 0; i < path.length; i++) {
+                                    var index = findInArray(currentDepth, path[i]);
+                                    if (index == -1) {
+                                        throw new Error("Path not found")
+                                    }
+                                    currentDepthID = currentDepth[index].id;
+                                }
+                                var childNumber = -1;
+                                for (var i = 0; i < currentDepth.length; i++) {
+                                    if (currentDepth[i].name == input.value) {
+                                        childNumber = i;
+                                    }
+                                }
+                                if (childNumber != -1) {
+                                    throw new Error("Name already taken")
+                                }
+                                //rename file
+                                this.renameFile(currentCalculatedPath, input.value);
+                                //remove input and add p
+                                element.children[1].outerHTML = '<p>' + input.value + '</p>';
+                            }
+                        }.bind(this))
+                        input.addEventListener('blur', function () {
+                            //remove input and add p
+                            element.children[1].outerHTML = '<p>' + oldText + '</p>';
+                        });
+                        element.children[1].remove();
+                        element.insertBefore(input, element.children[1]);
+                        input.focus();
+                    }.bind(this));
                     div.children[1].addEventListener('click', function () {
-                        console.log('delete')
                     });
                     div.addEventListener('contextmenu', function (e) {
                         e.preventDefault();
@@ -200,12 +280,12 @@ class Sidebar {
                     document.body.appendChild(div);
 
                     e.preventDefault()
-                })
+                }.bind(this))
             },
             this.deleteFile = function (path) {
                 //remove file name out of path
                 if (typeof path == 'string') {
-                path = this._handlePaths(path);
+                    path = this._handlePaths(path);
                 }
                 var fileName = path.pop();
                 //remove file from currentFiles
@@ -228,24 +308,22 @@ class Sidebar {
                     currentDepth = currentDepth[index].children;
                 }
                 var childNumber = -1;
-                for(var i = 0; i < currentDepth.length; i++){
-                    if(currentDepth[i].name == fileName){
-                        currentDepth.splice(i,1);
+                for (var i = 0; i < currentDepth.length; i++) {
+                    if (currentDepth[i].name == fileName) {
+                        currentDepth.splice(i, 1);
                         childNumber = i;
-                        console.log('cuttt')
                     }
                 }
                 //remove from html
                 var parent = document.getElementById(currentDepthID);
-                console.log(document.getElementById(currentDepthID),childNumber)
-                if(path.length == 0){
+                if (path.length == 0) {
                     parent.children[childNumber].remove();
-                }else{
+                } else {
                     parent.children[1].children[childNumber].remove();
                 }
             },
             this.renameFile = function (path, newName) {
-                if(newName.includes('/')){
+                if (newName.includes('/')) {
                     throw new Error("File names can't contain /")
                 }
                 //remove file name out of path
@@ -273,24 +351,24 @@ class Sidebar {
                     currentDepth = currentDepth[index].children;
                 }
                 var childNumber = -1;
-                for(var i = 0; i < currentDepth.length; i++){
-                    if(currentDepth[i].name == fileName){
+                for (var i = 0; i < currentDepth.length; i++) {
+                    if (currentDepth[i].name == fileName) {
                         currentDepth[i].name = newName;
                         childNumber = i;
                     }
                 }
                 //remove from html
                 var parent = document.getElementById(currentDepthID);
-                if(path.length == 0){
-                    if(fileName.includes('.')){
-                    parent.children[childNumber].children[1].innerHTML = newName;
-                    }else{
+                if (path.length == 0) {
+                    if (fileName.includes('.')) {
+                        parent.children[childNumber].children[1].innerHTML = newName;
+                    } else {
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
-                }else{
-                    if(fileName.includes('.')){
-                    parent.children[1].children[childNumber].children[1].innerHTML = newName;
-                    }else{
+                } else {
+                    if (fileName.includes('.')) {
+                        parent.children[1].children[childNumber].children[1].innerHTML = newName;
+                    } else {
                         parent.children[1].children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 }
