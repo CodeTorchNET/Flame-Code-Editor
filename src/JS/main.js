@@ -30,16 +30,30 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
         }
     });
     if (alreadyOpened) {
-        topMenuHandler.setActive(topMenuId);
+        topMenuHandler.setActive(topMenuId, true);
     } else {
+        const topMenuId = topMenuHandler.add(e.detail.name, e.detail.icon_name, false)
         _data.filesOpened.push({
             name: e.detail.name,
             path: e.detail.path,
             icon_name: e.detail.icon_name,
-            topMenuId: topMenuHandler.add(e.detail.name, e.detail.icon_name, false)
+            topMenuId: topMenuId,
+            SidebarId: e.detail.id
         });
+        //set active
+        topMenuHandler.setActive(topMenuId, true);
     }
 });
+document.getElementById('topMenu').addEventListener('tabChanged',function(e){
+    //find the path
+    var Id = null;
+    _data.filesOpened.forEach(function(element){
+        if(element.topMenuId == e.detail.id){
+            Id = element.SidebarId;
+        }
+    });
+    sidebarHandler.setActive(Id);
+})
 document.getElementById('newFile').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
 });

@@ -256,11 +256,11 @@ class Sidebar {
                                 if (input.value.split('.')[1] == undefined) {
                                     throw new Error("File name must contain an extension")
                                 }
-                                this.add(path, input.value, type, input.value.split('.')[1]);
+                                var finalID = this.add(path, input.value, type, input.value.split('.')[1]);
                                 //delete this
                                 div.remove();
                                 //dispatch fileOpened event
-                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1] } }));
+                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1] ,id: finalID} }));
                             }
                         } else {
                             //change icon   
@@ -548,6 +548,28 @@ class Sidebar {
                 }
                 this._data.target.dispatchEvent(new CustomEvent('fileRenamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName } }));
             },
+            this.setActive = function (id) {
+                //set active
+                if (this._data.activeFile != null) {
+                    this._data.activeFile.className = "item file";
+                }
+                var element = document.getElementById(id);
+                if(element == null){
+                    return;
+                }
+                element.className = "item file active";
+                this._data.activeFile = element;
+                //open folder parents infinite depth
+                var parent = element.parentNode;
+                while (parent.id != 'sideMenu') {
+                    if (parent.className.includes('itemParent')) {
+                        if (!parent.className.includes('active')) {
+                            parent.className = "itemParent active";
+                        }
+                    }
+                    parent = parent.parentNode;
+                }
+            }
             //internal data
             this._data = {
                 filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats

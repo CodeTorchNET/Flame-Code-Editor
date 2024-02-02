@@ -117,7 +117,7 @@ class TopBar {
             return element.id;
 
         }
-        this.setActive = function (id) {
+        this.setActive = function (id,override = false) {
             if (this._data.activeElement != null) {
                 this._data.target.children[this._data.activeElement].classList.remove("active");
                 this._data.target.children[this._data.activeElement].children[2].style.visibility = "hidden";
@@ -125,7 +125,9 @@ class TopBar {
             this._data.target.children[id].classList.add("active");
             this._data.target.children[id].children[2].style.visibility = "visible";
             this._data.activeElement = id;
+            if(!override){
             this._data.target.dispatchEvent(new CustomEvent('tabChanged', { detail: { id: id } }));
+            }
         }
         //internal data
         this._data = {
