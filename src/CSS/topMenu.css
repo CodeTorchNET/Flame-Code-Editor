@@ -29,10 +29,17 @@
 .topMenu .Tab.active img,
 .topMenu .Tab.active p,
 .topMenu .Tab.active div {
-  border-bottom: 2px transparent solid;
+  border: 2px transparent solid;
 }
+
+.topMenu .Tab.active .actions div {
+  width: 4px;
+  height: 4px;
+  margin-top: 4px;
+}
+
 .topMenu .Tab .name{ 
-margin-right: auto;
+  margin-right: auto;
 }
 
 .topMenu .Tab p {
