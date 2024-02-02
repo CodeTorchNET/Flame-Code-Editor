@@ -135,7 +135,69 @@ class TopBar {
                 this._data.activeElement = null;
             }
             this._data.target.children[id].remove();
-        }
+        },
+        this.changeState = function (id, edited) {
+            var target = this._data.target;
+            function internalEvents(ParentThis) {
+                const target = ParentThis._data.target;
+                const editedSVG = ParentThis._data.editedSVG;
+                const crossedSVG = ParentThis._data.crossedSVG;
+                target.children[id].children[2].children[0].addEventListener("click", function () {
+                    //check if current tab is active
+                    if (target.children[id].classList.contains("active")) {
+                        calculateNextActive(ParentThis);
+                    }
+                    target.children[id].remove();
+                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: target.children[id].id } }));
+                })
+                target.children[id].children[2].children[0].addEventListener('mouseover', function () {
+                    if (target.children[id].getAttribute('edited') == "true") {
+                        target.children[id].children[2].innerHTML = crossedSVG;
+                        internalEvents(ParentThis);
+                    }
+                });
+                target.children[id].children[2].children[0].addEventListener('mouseout', function () {
+                    if(target.children[id] != null){
+                    if (target.children[id].getAttribute('edited') == "true") {
+                        target.children[id].children[2].innerHTML = editedSVG;
+                        internalEvents(ParentThis);
+                    }
+                }
+                });
+                target.children[id].children[2].children[0].addEventListener('mouseup', function () {
+                    //check if current tab is active
+                    if (target.children[id].classList.contains("active")) {
+                        calculateNextActive(ParentThis);
+                    }
+                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: target.children[id].id } }));
+                    target.children[id].remove();
+                });
+            }
+            function calculateNextActive(ParentThis) {
+                //calculate next active element
+                var nextActive = null;
+                if (target.children[id].nextSibling != null) {
+                    nextActive = target.children[id].nextSibling;
+                } else if (target.children[id].previousSibling != null) {
+                    nextActive = target.children[id].previousSibling;
+                }
+                //set next active element
+                if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
+                    ParentThis.setActive(nextActive.id);
+                } else {
+                    ParentThis._data.activeElement = null;
+                }
+            }
+            if (edited) {
+                this._data.target.children[id].setAttribute('edited', "true");
+                this._data.target.children[id].children[2].innerHTML = this._data.editedSVG;
+                internalEvents(this);
+            } else {
+                this._data.target.children[id].setAttribute('edited', "false");
+                this._data.target.children[id].children[2].innerHTML = this._data.crossedSVG;
+                internalEvents(this);
+            }
+        },
         //internal data
         this._data = {
             filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats
