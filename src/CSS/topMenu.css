@@ -31,7 +31,9 @@
 .topMenu .Tab.active div {
   border-bottom: 2px transparent solid;
 }
-
+.topMenu .Tab .name{ 
+margin-right: auto;
+}
 
 .topMenu .Tab p {
   width: fit-content;

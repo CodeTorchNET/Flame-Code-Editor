@@ -18,102 +18,104 @@ class TopBar {
             }
         }
         this.add = function (name, icon_name, edited = false) {
+            var element = document.createElement("div");
+            var icon = document.createElement("img");
             if (this._data.filesKnown.indexOf(icon_name) != -1) {
-                var element = document.createElement("div");
-                var icon = document.createElement("img");
                 icon.src = "/assets/" + this._data.fileIcons[icon_name];
-                icon.className = "icon";
-                element.appendChild(icon);
-                element.className = "Tab";
-                var p = document.createElement("p");
-                p.innerHTML = name;
-                element.appendChild(p);
-                var i = document.createElement("div");
-                i.className = 'actions';
-                if (edited) {
-                    i.innerHTML = this._data.editedSVG;
-                    element.setAttribute('edited', "true");
-                } else {
-                    i.innerHTML = this._data.crossedSVG;
-                }
-                function calculateNextActive(ParentThis) {
-                    //calculate next active element
-                    var nextActive = null;
-                    if (element.nextSibling != null) {
-                        nextActive = element.nextSibling;
-                    } else if (element.previousSibling != null) {
-                        nextActive = element.previousSibling;
-                    }
-                    //set next active element
-                    if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
-                        ParentThis.setActive(nextActive.id);
-                    } else {
-                        ParentThis._data.activeElement = null;
-                    }
-                }
-
-                function internalEvents(ParentThis) {
-                    const target = ParentThis._data.target;
-                    const editedSVG = ParentThis._data.editedSVG;
-                    const crossedSVG = ParentThis._data.crossedSVG;
-                    i.children[0].addEventListener("click", function () {
-                        //check if current tab is active
-                        if (element.classList.contains("active")) {
-                            calculateNextActive(ParentThis);
-                        }
-                        element.remove();
-                        target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
-                    })
-                    i.children[0].addEventListener('mouseover', function () {
-                        if (element.getAttribute('edited') == "true") {
-                            i.innerHTML = crossedSVG;
-                            internalEvents(ParentThis);
-                        }
-                    });
-                    i.children[0].addEventListener('mouseout', function () {
-                        if (element.getAttribute('edited') == "true") {
-                            i.innerHTML = editedSVG;
-                            internalEvents(ParentThis);
-                        }
-                    });
-                    i.children[0].addEventListener('mouseup', function () {
-                        //check if current tab is active
-                        if (element.classList.contains("active")) {
-                            calculateNextActive(ParentThis);
-                        }
-                        element.remove();
-                        target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
-                    });
-                }
-                internalEvents(this);
-                element.appendChild(i);
-                element.id = 'TopBarTab' + this._data.currID;
-                element.addEventListener('click', function () {
-                    this.setActive(element.id);
-                }.bind(this));
-                element.addEventListener('mouseover', function () {
-                    //check if active
-                    if (!(element.classList.contains("active"))) {
-                        i.style.visibility = "visible";
-                    }
-                })
-                element.addEventListener('mouseout', function () {
-                    if (!(element.classList.contains("active"))) {
-                    i.style.visibility = "hidden";
-                    }
-                })
-                this._data.currID++;
-                this._data.target.appendChild(element);
-                //if active doesn't exist than set this tab as active
-                if (this._data.activeElement == null) {
-                    this.setActive(element.id);
-                }else{
-                    i.style.visibility = "hidden";
-                }
-                return element.id;
             } else {
-                throw new Error("File type is not known");
+                icon.src = "/assets/text.svg";
             }
+            icon.className = "icon";
+            element.appendChild(icon);
+            element.className = "Tab";
+            var p = document.createElement("p");
+            p.innerHTML = name;
+            p.className = "name";
+            element.appendChild(p);
+            var i = document.createElement("div");
+            i.className = 'actions';
+            if (edited) {
+                i.innerHTML = this._data.editedSVG;
+                element.setAttribute('edited', "true");
+            } else {
+                i.innerHTML = this._data.crossedSVG;
+            }
+            function calculateNextActive(ParentThis) {
+                //calculate next active element
+                var nextActive = null;
+                if (element.nextSibling != null) {
+                    nextActive = element.nextSibling;
+                } else if (element.previousSibling != null) {
+                    nextActive = element.previousSibling;
+                }
+                //set next active element
+                if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
+                    ParentThis.setActive(nextActive.id);
+                } else {
+                    ParentThis._data.activeElement = null;
+                }
+            }
+
+            function internalEvents(ParentThis) {
+                const target = ParentThis._data.target;
+                const editedSVG = ParentThis._data.editedSVG;
+                const crossedSVG = ParentThis._data.crossedSVG;
+                i.children[0].addEventListener("click", function () {
+                    //check if current tab is active
+                    if (element.classList.contains("active")) {
+                        calculateNextActive(ParentThis);
+                    }
+                    element.remove();
+                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
+                })
+                i.children[0].addEventListener('mouseover', function () {
+                    if (element.getAttribute('edited') == "true") {
+                        i.innerHTML = crossedSVG;
+                        internalEvents(ParentThis);
+                    }
+                });
+                i.children[0].addEventListener('mouseout', function () {
+                    if (element.getAttribute('edited') == "true") {
+                        i.innerHTML = editedSVG;
+                        internalEvents(ParentThis);
+                    }
+                });
+                i.children[0].addEventListener('mouseup', function () {
+                    //check if current tab is active
+                    if (element.classList.contains("active")) {
+                        calculateNextActive(ParentThis);
+                    }
+                    element.remove();
+                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
+                });
+            }
+            internalEvents(this);
+            element.appendChild(i);
+            element.id = 'TopBarTab' + this._data.currID;
+            element.addEventListener('click', function () {
+                this.setActive(element.id);
+            }.bind(this));
+            element.addEventListener('mouseover', function () {
+                //check if active
+                if (!(element.classList.contains("active"))) {
+                    i.style.visibility = "visible";
+                }
+            })
+            element.addEventListener('mouseout', function () {
+                if (!(element.classList.contains("active"))) {
+                    i.style.visibility = "hidden";
+                }
+            })
+            this._data.currID++;
+            this._data.target.appendChild(element);
+            //if active doesn't exist than set this tab as active
+            if (this._data.activeElement == null) {
+                this.setActive(element.id);
+            } else {
+                i.style.visibility = "hidden";
+            }
+            return element.id;
+
         }
         this.setActive = function (id) {
             if (this._data.activeElement != null) {

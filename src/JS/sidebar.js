@@ -114,7 +114,12 @@ class Sidebar {
                     throw new Error("File names can't contain /")
                 }
                 var div = document.createElement('div');
-                div.className = "item file";
+                div.className = "item file active";
+                if (this._data.activeFile != null) {
+                    this._data.activeFile.className = "item file";
+                }
+                div.className = "item file active";
+                this._data.activeFile = div;
                 div.id = 'sidebar' + this._data.currID;
                 this._data.currID++
                 var img = document.createElement('img');
@@ -146,7 +151,12 @@ class Sidebar {
                     div.className = "item file active";
                     this._data.activeFile = div;
                     //dispatch event
-                    this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id } }));
+                    var computedPath = path.join('/') + '/' + name;
+                    //if computed path doesn't start with / add it
+                    if (computedPath[0] != '/') {
+                        computedPath = '/' + computedPath;
+                    }
+                    this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id, path:computedPath, name: name, icon_name: icon_name } }));
                 }.bind(this));
 
                 if (path.length == 0) {
@@ -249,8 +259,10 @@ class Sidebar {
                                 this.add(path, input.value, type, input.value.split('.')[1]);
                                 //delete this
                                 div.remove();
+                                //dispatch fileOpened event
+                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1] } }));
                             }
-                        }else{
+                        } else {
                             //change icon   
                             if (this._data.fileIcons[input.value.split('.')[1]] != undefined) {
                                 img.src = "/assets/" + this._data.fileIcons[input.value.split('.')[1]];
