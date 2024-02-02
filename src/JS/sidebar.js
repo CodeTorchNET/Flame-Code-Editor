@@ -554,7 +554,11 @@ class Sidebar {
                 if(oldPath[0] != '/'){
                     oldPath = '/' + oldPath;
                 }
-                this._data.target.dispatchEvent(new CustomEvent(actionName+'Renamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName, oldName: fileName , oldPath: oldPath} }));
+                var absPath = path.join('/') + '/' + newName;
+                if(absPath[0] != '/'){
+                    absPath = '/' + absPath;
+                }
+                this._data.target.dispatchEvent(new CustomEvent(actionName+'Renamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: absPath, oldName: fileName , oldPath: oldPath} }));
             },
             this.setActive = function (id) {
                 //set active
