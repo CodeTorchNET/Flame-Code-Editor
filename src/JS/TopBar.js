@@ -110,7 +110,7 @@ class TopBar {
             this._data.target.appendChild(element);
             //if active doesn't exist than set this tab as active
             if (this._data.activeElement == null) {
-                this.setActive(element.id);
+                this.setActive(element.id,true);
             } else {
                 i.style.visibility = "hidden";
             }
@@ -128,6 +128,13 @@ class TopBar {
             if(!override){
             this._data.target.dispatchEvent(new CustomEvent('tabChanged', { detail: { id: id } }));
             }
+        },
+        this.remove = function (id) {
+            //check if was active
+            if (this._data.activeElement == id) {
+                this._data.activeElement = null;
+            }
+            this._data.target.children[id].remove();
         }
         //internal data
         this._data = {

@@ -114,7 +114,6 @@ class Sidebar {
                     throw new Error("File names can't contain /")
                 }
                 var div = document.createElement('div');
-                div.className = "item file active";
                 if (this._data.activeFile != null) {
                     this._data.activeFile.className = "item file";
                 }
