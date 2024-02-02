@@ -236,7 +236,7 @@ class Sidebar {
                     input.placeholder = "New File";
                     div.appendChild(input);
                     //add events
-                    input.addEventListener('keydown', function (e) {
+                    input.addEventListener('keyup', function (e) {
                         if (e.key == 'Enter') {
                             //check if any difference in name
                             if (input.value == '') {
@@ -250,6 +250,13 @@ class Sidebar {
                                 this.add(path, input.value, type, input.value.split('.')[1]);
                                 //delete this
                                 div.remove();
+                            }
+                        }else{
+                            //change icon   
+                            if (this._data.fileIcons[input.value.split('.')[1]] != undefined) {
+                                img.src = "/assets/" + this._data.fileIcons[input.value.split('.')[1]];
+                            } else {
+                                img.src = "/assets/text.svg";
                             }
                         }
                     }.bind(this))
