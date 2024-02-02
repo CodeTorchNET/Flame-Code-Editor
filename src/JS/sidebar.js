@@ -527,6 +527,7 @@ class Sidebar {
                 }
                 //remove from html
                 var parent = document.getElementById(currentDepthID);
+                var actionName = 'file';
                 if (path.length == 0) {
                     if (fileName.includes('.')) {
                         parent.children[childNumber].children[1].innerHTML = newName;
@@ -535,18 +536,25 @@ class Sidebar {
                             parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
                         } else {
                             parent.children[childNumber].children[0].src = "/assets/text.svg";
+                        
                         }
                     } else {
+                        actionName = 'folder';
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 } else {
                     if (fileName.includes('.')) {
                         parent.children[1].children[childNumber].children[1].innerHTML = newName;
                     } else {
+                        actionName = 'folder';
                         parent.children[1].children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 }
-                this._data.target.dispatchEvent(new CustomEvent('fileRenamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName } }));
+                var oldPath = path.join('/') + '/' + fileName;
+                if(oldPath[0] != '/'){
+                    oldPath = '/' + oldPath;
+                }
+                this._data.target.dispatchEvent(new CustomEvent(actionName+'Renamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName, oldName: fileName , oldPath: oldPath} }));
             },
             this.setActive = function (id) {
                 //set active

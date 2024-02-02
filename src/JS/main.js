@@ -15,9 +15,24 @@ document.getElementById("sideMenu").addEventListener('folderClosed', function (e
     _data.currentCreatePath = '/';
 });
 document.getElementById("sideMenu").addEventListener('fileRenamed', function (e) {
+    //check if it is open if so rename it
+    _data.filesOpened.forEach(function (element) {
+        if (element.path == e.detail.oldPath) {
+            topMenuHandler.rename(element.topMenuId, e.detail.newName);
+        }
+    });
+    //rename element in _data
+    _data.filesOpened.forEach(function (element) {
+        if (element.path == e.detail.oldPath) {
+            element.name = e.detail.newName;
+            element.path = e.detail.absPath;
+        }
+    });
+});
+document.getElementById("sideMenu").addEventListener('folderRenamed', function (e) {
     //HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY
     console.log('HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY', e.detail);
-});
+})
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
     //open it in top bar
     //check if it is already opened

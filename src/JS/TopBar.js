@@ -198,6 +198,9 @@ class TopBar {
                 internalEvents(this);
             }
         },
+        this.rename = function (id, newName) {
+            this._data.target.children[id].children[1].innerHTML = newName;
+        }
         //internal data
         this._data = {
             filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats
