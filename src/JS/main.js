@@ -54,6 +54,29 @@ document.getElementById('topMenu').addEventListener('tabChanged',function(e){
     });
     sidebarHandler.setActive(Id);
 })
+document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
+    var Id = null;
+    var index = null;
+    _data.filesOpened.forEach(function (element, i) {
+        if (element.topMenuId == e.detail.id) {
+            Id = element.SidebarId;
+            index = i;
+        }
+    });
+    _data.filesOpened.splice(index, 1);
+});
+document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
+    var Id = null;
+    var index = null;
+    _data.filesOpened.forEach(function (element, i) {
+        if (element.path == e.detail.path) {
+            Id = element.topMenuId;
+            index = i;
+        }
+    });
+    _data.filesOpened.splice(index, 1);
+    topMenuHandler.remove(Id);
+});
 document.getElementById('newFile').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
 });
