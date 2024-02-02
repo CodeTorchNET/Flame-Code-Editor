@@ -1,10 +1,4 @@
-//instead of looping through whole HTML at parent itemSubContent then look (each element is known by itemSubContent id)
-
-//open event
-// don't allow double naming - on create/rename -!!!! - rename done
 //rename folder all heirarchy changes
-//update icon on rename
-//custom events for rename delete, etc
 
 //top bar add edit thing - remove edit thing
 //close tab manually
