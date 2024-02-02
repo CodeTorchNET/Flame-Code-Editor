@@ -30,7 +30,6 @@ class Sidebar {
                     throw new Error("Folder names can't contain / or .")
                 }
                 //check if folder name already taken
-
                 var div = document.createElement('div');
                 div.className = "itemParent";
                 div.id = 'sidebar' + this._data.currID;
@@ -46,6 +45,7 @@ class Sidebar {
             <div id="itemSubContent`+ div.id + `" class="itemSubContent">
             </div>`
                 div.children[0].addEventListener('click', function () {
+                    var action = 'folderOpened'
                     if (div.className == "itemParent active") {
                         div.className = "itemParent";
                         //close all children infinite depth
@@ -58,10 +58,26 @@ class Sidebar {
                             }
                         }
                         cleanUpChildren(div.children[1]);
+                        action = 'folderClosed'
                     } else {
                         div.className = "itemParent active";
                     }
-                })
+                    //calculate path
+                    var currentCalculatedPath = [];
+                    var parent = div;
+                    while (parent.id != 'sideMenu') {
+                        if (parent.className.includes('itemParent')) {
+                            currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                        }
+                        parent = parent.parentNode;
+                    }
+                    currentCalculatedPath.reverse();
+                    //join path
+                    currentCalculatedPath = '/' + currentCalculatedPath.join('/') + '/';
+                    //dispatch event
+                    this._data.target.dispatchEvent(new CustomEvent(action, { detail: { id: div.id, path: currentCalculatedPath } }));
+
+                }.bind(this));
                 this._rightClick(div.children[0]);
                 //add to current files
                 var fileData = {
@@ -85,7 +101,7 @@ class Sidebar {
                     this._data.target.appendChild(div);
                 } else {
                     //add to current depth
-                    var id = this.handlePaths(path, fileData,'folder');
+                    var id = this.handlePaths(path, fileData, 'folder');
                     //append to target
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
@@ -97,71 +113,170 @@ class Sidebar {
                 if (name.includes('/') || name.includes(' ')) {
                     throw new Error("File names can't contain /")
                 }
-                if (this._data.filesKnown.indexOf(icon_name) != -1) {
-                    var div = document.createElement('div');
-                    div.className = "item file";
-                    div.id = 'sidebar' + this._data.currID;
-                    this._data.currID++
-                    var img = document.createElement('img');
-                    img.src = "/assets/" + this._data.fileIcons[icon_name];
-                    div.appendChild(img);
-                    var p = document.createElement('p');
-                    p.innerHTML = name;
-                    div.appendChild(p);
-                    //add to current files
-                    var fileData = {
-                        name: name,
-                        path: path,
-                        type: 'file',
-                        icon_name: icon_name,
-                        id: div.id,
-                    }
-                    path = this._handlePaths(path);
-                    //add right click menu
-                    this._rightClick(div);
-                    //add click action
-                    div.addEventListener('click', function () {
-                        if (this._data.activeFile != null) {
-                            this._data.activeFile.className = "item file";
-                        }
-                        div.className = "item file active";
-                        this._data.activeFile = div;
-                        //dispatch event
-                        this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id } }));
-                    }.bind(this));
-
-                    if (path.length == 0) {
-                        //check if file name already taken
-                        for (var i = 0; i < this._data.currentFiles.length; i++) {
-                            if (this._data.currentFiles[i].name == name && this._data.currentFiles[i].type == 'file') {
-                                throw new Error("File name already taken")
-                            }
-                        }
-                        //add to base current files
-                        this._data.currentFiles.push(fileData);
-                        //append to target
-                        this._data.target.appendChild(div);
-                    } else {                        
-                        //add to current depth
-                        var id = this.handlePaths(path, fileData);
-                        //append to target
-                        var parent = document.getElementById(id);
-                        parent.children[1].appendChild(div);
-                    }
-                    //dispatch event
-                    this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id } }));
-                    return div.id;
+                var div = document.createElement('div');
+                div.className = "item file";
+                div.id = 'sidebar' + this._data.currID;
+                this._data.currID++
+                var img = document.createElement('img');
+                if (this._data.filesKnown.indexOf(icon_name) == -1) {
+                    img.src = '/assets/text.svg';
                 } else {
-                    throw new Error("Unknown icon name")
+                    img.src = "/assets/" + this._data.fileIcons[icon_name];
                 }
+                div.appendChild(img);
+                var p = document.createElement('p');
+                p.innerHTML = name;
+                div.appendChild(p);
+                //add to current files
+                var fileData = {
+                    name: name,
+                    path: path,
+                    type: 'file',
+                    icon_name: icon_name,
+                    id: div.id,
+                }
+                path = this._handlePaths(path);
+                //add right click menu
+                this._rightClick(div);
+                //add click action
+                div.addEventListener('click', function () {
+                    if (this._data.activeFile != null) {
+                        this._data.activeFile.className = "item file";
+                    }
+                    div.className = "item file active";
+                    this._data.activeFile = div;
+                    //dispatch event
+                    this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id } }));
+                }.bind(this));
+
+                if (path.length == 0) {
+                    //check if file name already taken
+                    for (var i = 0; i < this._data.currentFiles.length; i++) {
+                        if (this._data.currentFiles[i].name == name && this._data.currentFiles[i].type == 'file') {
+                            throw new Error("File name already taken")
+                        }
+                    }
+                    //add to base current files
+                    this._data.currentFiles.push(fileData);
+                    //append to target
+                    this._data.target.appendChild(div);
+                } else {
+                    //add to current depth
+                    var id = this.handlePaths(path, fileData);
+                    //append to target
+                    var parent = document.getElementById(id);
+                    parent.children[1].appendChild(div);
+                }
+                //dispatch event
+                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id } }));
+                return div.id;
+
             } else {
                 throw new Error("Unknown type (expected 'folder' or 'file') got " + type)
             }
         },
+            this.renderAdd = function (path, type = 'folder') {
+                //renders a temporary file with input (similar to rename function)
+                //create new file with input
+                if (type == 'folder') {
+                    var div = document.createElement('div');
+                    div.className = "itemParent";
+                    div.id = 'tempCreationHandler';
+                    div.innerHTML = `
+                <div class="item folder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <input type="text" placeholder="New Folder">
+                </div>
+                    <div id="itemSubContent`+ div.id + `" class="itemSubContent">
+                </div>`;
+                    //add events
+                    var input = div.children[0].children[1];
+                    input.addEventListener('keydown', function (e) {
+                        if (e.key == 'Enter') {
+                            //check if any difference in name
+                            if (input.value == '') {
+                                div.remove();
+                                return;
+                            } else {
+                                //createFile file
+                                console.log(path, input.value, type)
+                                this.add(path, input.value, type);
+                                //delete this
+                                div.remove();
+                            }
+                        }
+                    }.bind(this))
+                    input.addEventListener('blur', function () {
+                        //remove div
+                        div.remove();
+                    });
+                    var pathSplit = this._handlePaths(path);
+                    if (pathSplit.length == 0) {
+                        this._data.target.appendChild(div);
+                    } else {
+                        var id = this.handlePaths(path, '', 'folder', false);
+                        //append to target
+                        var parent = document.getElementById(id);
+                        parent.children[1].appendChild(div);
+                    }
+                    //focus input automatically
+                    input.focus();
+                } else if (type == 'file') {
+                    var div = document.createElement('div');
+                    div.className = "item file";
+                    div.id = 'tempCreationHandler';
+                    var img = document.createElement('img');
+                    img.src = "/assets/text.svg";
+                    div.appendChild(img);
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = "New File";
+                    div.appendChild(input);
+                    //add events
+                    input.addEventListener('keydown', function (e) {
+                        if (e.key == 'Enter') {
+                            //check if any difference in name
+                            if (input.value == '') {
+                                div.remove();
+                                return;
+                            } else {
+                                //createFile file
+                                if (input.value.split('.')[1] == undefined) {
+                                    throw new Error("File name must contain an extension")
+                                }
+                                this.add(path, input.value, type, input.value.split('.')[1]);
+                                //delete this
+                                div.remove();
+                            }
+                        }
+                    }.bind(this))
+                    input.addEventListener('blur', function () {
+                        //remove div
+                        div.remove();
+                    });
+                    var pathSplit = this._handlePaths(path);
+                    if (pathSplit.length == 0) {
+                        this._data.target.appendChild(div);
+                    } else {
+                        var id = this.handlePaths(path, '', 'folder', false);
+                        //append to target
+                        var parent = document.getElementById(id);
+                        parent.children[1].appendChild(div);
+                    }
+                    //focus input automatically
+                    input.focus();
+
+                } else {
+                    throw new Error("Unknown type (expected 'folder' or 'file') got " + type)
+                }
+            },
             this._handlePaths = function (path) {
                 return path.split('/').filter(element => element !== "");
             },
-            this.handlePaths = function (path, appendedData, type = 'file') {
+            this.handlePaths = function (path, appendedData, type = 'file', pushData = true) {
                 //expect array
                 if (appendedData == undefined) {
                     throw new Error("No appended data provided")
@@ -194,7 +309,9 @@ class Sidebar {
                     }
                 }
                 //add to current depth
-                currentDepth.push(appendedData);
+                if (pushData) {
+                    currentDepth.push(appendedData);
+                }
                 return currentDepthID;
             },
             this._rightClick = function (element) {
@@ -255,11 +372,11 @@ class Sidebar {
                                     //remove input and add p
                                     element.children[1].outerHTML = '<p>' + input.value + '</p>';
                                     return;
-                                }else{
-                                //rename file
-                                this.renameFile(currentCalculatedPath, input.value);
-                                //remove input and add p
-                                element.children[1].outerHTML = '<p>' + input.value + '</p>';
+                                } else {
+                                    //rename file
+                                    this.renameFile(currentCalculatedPath, input.value);
+                                    //remove input and add p
+                                    element.children[1].outerHTML = '<p>' + input.value + '</p>';
                                 }
                             }
                         }.bind(this))
@@ -378,8 +495,8 @@ class Sidebar {
                     currentDepth = currentDepth[index].children;
                 }
                 //check if name is already taken
-                for(var i = 0; i < currentDepth.length; i++){
-                    if(currentDepth[i].name == newName && ((currentDepth[i].type == 'file' && fileName.includes('.'))||(currentDepth[i].type == 'folder' && !fileName.includes('.'))) ){
+                for (var i = 0; i < currentDepth.length; i++) {
+                    if (currentDepth[i].name == newName && ((currentDepth[i].type == 'file' && fileName.includes('.')) || (currentDepth[i].type == 'folder' && !fileName.includes('.')))) {
                         throw new Error("Name already taken")
                     }
                 }
@@ -396,12 +513,12 @@ class Sidebar {
                     if (fileName.includes('.')) {
                         parent.children[childNumber].children[1].innerHTML = newName;
                         //change icon
-                        if(this._data.fileIcons[newName.split('.')[1]] != undefined){
-                        parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
-                        }else{
+                        if (this._data.fileIcons[newName.split('.')[1]] != undefined) {
+                            parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
+                        } else {
                             parent.children[childNumber].children[0].src = "/assets/text.svg";
                         }
-                        } else {
+                    } else {
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 } else {

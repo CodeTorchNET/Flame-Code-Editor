@@ -7,9 +7,10 @@
     --border-selected: #145282;
     --border: #242424;
     --linedown-color: #585858;
-    --selectedItem:#03395e;
-    --selectedItemBorder:#036cbc;
+    --selectedItem: #03395e;
+    --selectedItemBorder: #036cbc;
 }
+
 body {
     margin: 0px;
     font-family: Roboto;
@@ -22,4 +23,23 @@ body {
 .main {
     display: flex;
     height: 100%;
+}
+
+.topSideMenu {
+    display: flex;
+    margin-top: 13px;
+    margin-bottom: 13px;
+}
+
+.topSideMenu svg {
+    width: 1pc;
+    height: 1pc;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.topSideMenu p {
+    margin: 0px;
+    margin-right: 20px;
 }
