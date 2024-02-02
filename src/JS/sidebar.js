@@ -202,7 +202,6 @@ class Sidebar {
                                 return;
                             } else {
                                 //createFile file
-                                console.log(path, input.value, type)
                                 this.add(path, input.value, type);
                                 //delete this
                                 div.remove();
