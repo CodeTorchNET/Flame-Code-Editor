@@ -1,0 +1,106 @@
+.sideMenu {
+    background-color: var(--main-background-border);
+    height: 100%;
+    width: 168px;
+    padding: 20px;
+    padding-left: 12px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin: 1px solid var(--main-background-border);
+}
+
+.sideMenu .item {
+    display: flex;
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.sideMenu .item:hover {
+    background-color: var(--main-hover);
+}
+.sideMenu .item.active {
+    background-color: var(--selectedItem);
+    border: 1px solid var(--selectedItemBorder);
+}
+
+.sideMenu .item p {
+    margin: 0px;
+    margin-left: 4px;
+    width: 100%;
+}
+.sideMenu .item.folder p {
+    margin-left: 0px;
+}
+
+.sideMenu .item input {
+    margin: 0px;
+    margin-left: 4px;
+    width: 100%;
+    height: 11px;
+    border: 1px var(--border-selected) solid;
+    background-color: transparent;
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 2px;
+}
+
+.sideMenu .item svg,
+.sideMenu .item img {
+    width: 17px;
+    height: 17px;
+    transition: transform 120ms ease-in-out;
+}
+
+.sideMenu .itemParent.active>.item>svg {
+    transform: rotate(90deg);
+}
+
+.sideMenu .itemParent.active>.itemSubContent {
+    visibility: visible;
+    height: auto;
+    margin-top: 0px;
+}
+
+.sideMenu .itemSubContent {
+    margin-left: 7px;
+    width: 100%;
+    border-left: 1px solid var(--linedown-color);
+    visibility: hidden;
+    height: 0px;
+}
+
+.sideMenu .itemSubContent .item img {
+    margin-left: 3px;
+}
+
+.rightClick {
+    width: fit-content;
+    background-color: var(--main-background);
+    position: absolute;
+    top: 0px;
+    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 8px;
+}
+
+.rightClick .rename {
+    display: flex;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.rightClick .delete {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.rightClick .delete p {
+    width: 100%;
+    text-align: center;
+    margin: 0px;
+}

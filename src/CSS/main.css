@@ -1,0 +1,25 @@
+* {
+    --text-primary: #a7a7a7;
+    --text-primary-selected: #fff;
+    --main-background: #1f1f1f;
+    --main-background-border: #181818;
+    --main-hover: #a8a8a822;
+    --border-selected: #145282;
+    --border: #242424;
+    --linedown-color: #585858;
+    --selectedItem:#03395e;
+    --selectedItemBorder:#036cbc;
+}
+body {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 13px;
+    background-color: var(--main-background);
+    height: 100%;
+    color: var(--text-primary);
+}
+
+.main {
+    display: flex;
+    height: 100%;
+}
