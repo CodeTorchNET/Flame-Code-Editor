@@ -31,7 +31,20 @@ document.getElementById("sideMenu").addEventListener('fileRenamed', function (e)
 });
 document.getElementById("sideMenu").addEventListener('folderRenamed', function (e) {
     //HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY
-    console.log('HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY', e.detail);
+    //check if it all files are underneath renamed folder
+    _data.filesOpened.forEach(function (element) {
+        //check if it starts with the old path
+        filePath = element.path.split('/');
+        filePath.pop();
+        filePath = filePath.join('/');
+        if(filePath == ''){
+            filePath = '/';
+        }
+        if (filePath.startsWith(e.detail.oldPath)) {
+            element.path = element.path.replace(e.detail.oldPath, e.detail.absPath);
+        }
+    });
+    console.log(_data.filesOpened);
 })
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
     //open it in top bar
