@@ -424,11 +424,12 @@ class Sidebar {
                         if (element.className.includes('file')) {
                             //add name to end of path
                             currentCalculatedPath += '/' + element.children[1].innerHTML;
+                            this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
                         } else {
                             currentCalculatedPath = '/' + currentCalculatedPath + '/';
+                            this._data.target.dispatchEvent(new CustomEvent('folderDeleted', { detail: { path: currentCalculatedPath } }));
                         }
                         //dispatch event
-                        this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
                         //remove file
                         this.deleteFile(currentCalculatedPath);
                     }.bind(this));

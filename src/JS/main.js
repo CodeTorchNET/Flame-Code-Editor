@@ -77,6 +77,22 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
     _data.filesOpened.splice(index, 1);
     topMenuHandler.remove(Id);
 });
+document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
+    //check every file and remove the ones that are in the folder
+    var toRemove = [];
+    _data.filesOpened.forEach(function (element, i) {
+        if (element.path.includes(e.detail.path)) {
+            toRemove.push(element.topMenuId);
+        }
+    });
+    //remove from _data
+    _data.filesOpened = _data.filesOpened.filter(function (element) {
+        return !element.path.includes(e.detail.path);
+    });
+    toRemove.forEach(function (element) {
+        topMenuHandler.remove(element);
+    });
+});
 document.getElementById('newFile').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
 });
