@@ -7,6 +7,8 @@
     --border-selected: #145282;
     --border: #242424;
     --linedown-color: #585858;
+    --selectedItem:#03395e;
+    --selectedItemBorder:#036cbc;
 }
 
 body {
@@ -23,6 +25,8 @@ body {
     height: 100%;
     width: 160px;
     padding: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .sideMenu .item {
@@ -34,6 +38,10 @@ body {
 
 .sideMenu .item:hover {
     background-color: var(--main-hover);
+}
+.sideMenu .item.active {
+    background-color: var(--selectedItem);
+    border: 1px solid var(--selectedItemBorder);
 }
 
 .sideMenu .item p {

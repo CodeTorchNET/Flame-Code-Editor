@@ -127,10 +127,14 @@ class Sidebar {
                     this._rightClick(div);
                     //add click action
                     div.addEventListener('click', function () {
+                        if (this._data.activeFile != null) {
+                            this._data.activeFile.className = "item file";
+                        }
+                        div.className = "item file active";
+                        this._data.activeFile = div;
                         //dispatch event
-                        //add active class
-                        this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path.join('/') + '/' + name } }));
-                    })
+                        this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id } }));
+                    }.bind(this));
 
                     if (path.length == 0) {
                         //check if file name already taken
@@ -191,7 +195,6 @@ class Sidebar {
                 }
                 //check if file name already taken
                 for (var i = 0; i < currentDepth.length; i++) {
-                    console.log(currentDepth[i].name, appendedData.name, currentDepth[i].type, type)
                     if (currentDepth[i].name == appendedData.name && ((currentDepth[i].type == 'file' && type == 'file') || (currentDepth[i].type == 'folder' && type == 'folder'))) {
                         throw new Error("File name already taken")
                     }
@@ -404,7 +407,6 @@ class Sidebar {
                         }else{
                             parent.children[childNumber].children[0].src = "/assets/text.svg";
                         }
-                        console.log(parent.children[childNumber].children[0].src)
                         } else {
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
@@ -415,7 +417,6 @@ class Sidebar {
                         parent.children[1].children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 }
-                console.log({ id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName })
                 this._data.target.dispatchEvent(new CustomEvent('fileRenamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: path.join('/') + '/' + newName } }));
             },
             //internal data
@@ -454,6 +455,7 @@ class Sidebar {
                 target: null,
                 currentFiles: [],
                 currID: 0,
+                activeFile: null,
             }
     }
 
