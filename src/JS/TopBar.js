@@ -1,3 +1,7 @@
+/**
+ * @class TopBar
+ * @description This class is responsible for handling the top bar of the application
+ */
 class TopBar {
     constructor() {
         this.init = function (el) {

@@ -1,7 +1,12 @@
+//save files temporarily on edit even if Editor gets desposed
+
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
-sidebarHandler.init(document.getElementById("sideMenu"));
+sidebarHandler.init(document.getElementById("sideMenu"), new fileContentManager());
+var editorHandler = new Editor();
+editorHandler.init(document.getElementById("mainContent"));
+
 const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -88,6 +93,7 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
         //set active
         topMenuHandler.setActive(topMenuId, true);
     }
+    editorHandler.renderFileEditor('Loading...'+e.detail.id,editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
 });
 document.getElementById('topMenu').addEventListener('tabChanged',function(e){
     //find the path
@@ -98,7 +104,9 @@ document.getElementById('topMenu').addEventListener('tabChanged',function(e){
         }
     });
     sidebarHandler.setActive(Id);
+    editorHandler.renderFileEditor('Loading...'+Id,editorHandler.languageEquivalent(Id.split('.').pop()));
 })
+//NEEDS
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     var Id = null;
     var index = null;
@@ -110,6 +118,7 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     });
     _data.filesOpened.splice(index, 1);
 });
+//NEEDS
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
     var Id = null;
     var index = null;
@@ -122,6 +131,7 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
     _data.filesOpened.splice(index, 1);
     topMenuHandler.remove(Id);
 });
+//NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
     //check every file and remove the ones that are in the folder
     var toRemove = [];

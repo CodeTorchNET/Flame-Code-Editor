@@ -1,3 +1,7 @@
+/**
+ * @class Editor
+ * @description This class is responsible for rendering the editor and handling the editor
+ */
 class Editor {
     constructor() {
         this.init = function (el) {
@@ -22,6 +26,10 @@ class Editor {
                         language: language,
                         theme: 'vs-dark',
                     });
+                    editor.getModel().onDidChangeContent(function(event) {
+                        // Handle the content change event
+                        console.log('Content changed:', event);
+                    });
                 });            
             },
             this.renderImageEditor = function () {
@@ -34,9 +42,22 @@ class Editor {
             },
             this._cleanUp = function () {
                 this._data.target.innerHTML = '';
+                //remove all attributes of this._data.target
+                for (var i = 0; i < this._data.target.attributes.length; i++) {
+                    if(!(this._data.target.attributes[i].name == 'id' || !this._data.target.attributes[i].name == 'class' || !this._data.target.attributes[i].name == 'style')){
+                    this._data.target.removeAttribute(this._data.target.attributes[i].name);
+                    }
+                }
                 if (this._data.editor != null) {
                     this._data.editor.despose();
                     this._data.editor = null;
+                }
+            },
+            this.languageEquivalent = function (ext) {
+                if (this._data.languageEquivalents[ext]) {
+                    return this._data.languageEquivalents[ext];
+                } else {
+                    return this._data.languageEquivalents['unknown'];
                 }
             },
             this._data = {
@@ -44,6 +65,19 @@ class Editor {
                 target: null,
                 currentScreen: 'welcome',
                 editor: null,
+                languageEquivalents: {
+                    js: 'javascript',
+                    html: 'html',
+                    css: 'css',
+                    jsx: 'javascript',
+                    json: 'json',
+                    md: 'markdown',
+                    png: 'image',
+                    svg: 'image',
+                    vue: 'vue',
+                    txt: 'text',
+                    unknown: 'text'
+                }
             }
     }
 }

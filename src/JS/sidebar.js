@@ -1,15 +1,25 @@
-//rename folder all heirarchy changes
-
-//top bar add edit thing - remove edit thing
-//close tab manually
-
+/**
+ * @class Sidebar
+ * @description A class to handle the sidebar of the application
+ */
 class Sidebar {
     constructor() {
-        this.init = function (el) {
+        this.init = function (el, FCM) {
             if (typeof el == "undefined") {
                 throw new Error("No element provided")
             } else if (typeof el == 'object') {
                 this._data.target = el;
+                if (FCM == undefined) {
+                    throw new Error("No fileContentManager provided")
+                } else if (typeof FCM != 'object') {
+                    if(FCM instanceof fileContentManager){
+                    this._data.fileContentManager = fileContentManager;
+                    }else{
+                        throw new Error("FCM should be an instance of fileContentManager")
+                    }
+                } else {
+                    throw new Error("fileContentManager is not an object")
+                }
                 //right click menu
                 function handleRightClick(e) {
                     if (!(e.target.className == 'rename' || e.target.className == 'delete' || e.target.className == 'rightClick' || e.target.parentNode.className == 'delete' || e.target.parentNode.className == 'rename')) {
@@ -155,7 +165,7 @@ class Sidebar {
                     if (computedPath[0] != '/') {
                         computedPath = '/' + computedPath;
                     }
-                    this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id, path:computedPath, name: name, icon_name: icon_name } }));
+                    this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { id: div.id, path: computedPath, name: name, icon_name: icon_name } }));
                 }.bind(this));
 
                 if (path.length == 0) {
@@ -259,7 +269,7 @@ class Sidebar {
                                 //delete this
                                 div.remove();
                                 //dispatch fileOpened event
-                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1] ,id: finalID} }));
+                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1], id: finalID } }));
                             }
                         } else {
                             //change icon   
@@ -536,7 +546,7 @@ class Sidebar {
                             parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
                         } else {
                             parent.children[childNumber].children[0].src = "/assets/text.svg";
-                        
+
                         }
                     } else {
                         actionName = 'folder';
@@ -551,14 +561,14 @@ class Sidebar {
                     }
                 }
                 var oldPath = path.join('/') + '/' + fileName;
-                if(oldPath[0] != '/'){
+                if (oldPath[0] != '/') {
                     oldPath = '/' + oldPath;
                 }
                 var absPath = path.join('/') + '/' + newName;
-                if(absPath[0] != '/'){
+                if (absPath[0] != '/') {
                     absPath = '/' + absPath;
                 }
-                this._data.target.dispatchEvent(new CustomEvent(actionName+'Renamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: absPath, oldName: fileName , oldPath: oldPath} }));
+                this._data.target.dispatchEvent(new CustomEvent(actionName + 'Renamed', { detail: { id: childNumber, newName: newName, path: currentDepthID, absPath: absPath, oldName: fileName, oldPath: oldPath } }));
             },
             this.setActive = function (id) {
                 //set active
@@ -566,7 +576,7 @@ class Sidebar {
                     this._data.activeFile.className = "item file";
                 }
                 var element = document.getElementById(id);
-                if(element == null){
+                if (element == null) {
                     return;
                 }
                 element.className = "item file active";
@@ -582,44 +592,45 @@ class Sidebar {
                     parent = parent.parentNode;
                 }
             }
-            //internal data
-            this._data = {
-                filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats
-                fileIcons: {
-                    js: "JS.svg",
-                    html: "HTML.svg",
-                    css: "CSS.svg",
-                    jsx: "react.svg",
-                    pdf: "PDF.svg",
-                    eps: "EPS.svg",
-                    ttf: "Font.svg",
-                    otf: "Font.svg",
-                    woff: "Font.svg",
-                    woff2: "Font.svg",
-                    eot: "Font.svg",
-                    json: "JSON.svg",
-                    md: "MD.svg",
-                    png: "PNG.svg",
-                    svg: "SVG.svg",
-                    vue: "Vue.svg",
-                    jpeg: "PNG.svg",
-                    jpg: "PNG.svg",
-                    ico: "PNG.svg",
-                    gif: "PNG.svg",
-                    bmp: "PNG.svg",
-                    tiff: "PNG.svg",
-                    tif: "PNG.svg",
-                    mp3: "audio.svg",
-                    wav: "audio.svg",
-                    flac: "audio.svg",
-                    aac: "audio.svg",
-                    ogg: "audio.svg",
-                },
-                target: null,
-                currentFiles: [],
-                currID: 0,
-                activeFile: null,
-            }
+        //internal data
+        this._data = {
+            filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats
+            fileIcons: {
+                js: "JS.svg",
+                html: "HTML.svg",
+                css: "CSS.svg",
+                jsx: "react.svg",
+                pdf: "PDF.svg",
+                eps: "EPS.svg",
+                ttf: "Font.svg",
+                otf: "Font.svg",
+                woff: "Font.svg",
+                woff2: "Font.svg",
+                eot: "Font.svg",
+                json: "JSON.svg",
+                md: "MD.svg",
+                png: "PNG.svg",
+                svg: "SVG.svg",
+                vue: "Vue.svg",
+                jpeg: "PNG.svg",
+                jpg: "PNG.svg",
+                ico: "PNG.svg",
+                gif: "PNG.svg",
+                bmp: "PNG.svg",
+                tiff: "PNG.svg",
+                tif: "PNG.svg",
+                mp3: "audio.svg",
+                wav: "audio.svg",
+                flac: "audio.svg",
+                aac: "audio.svg",
+                ogg: "audio.svg",
+            },
+            target: null,
+            currentFiles: [],
+            currID: 0,
+            activeFile: null,
+            fileContentManager: null,
+        }
     }
 
 }

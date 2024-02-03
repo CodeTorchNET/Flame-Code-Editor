@@ -22,6 +22,7 @@ body {
     background-color: var(--main-background);
     height: 100%;
     color: var(--text-primary);
+    overflow: hidden;
 }
 
 .main {
@@ -50,5 +51,6 @@ body {
 
 #mainContent{
     width: 100%;
-    height: 100%;
+    height: calc(100% - 38px);
+    padding-top: 25px;
 }
