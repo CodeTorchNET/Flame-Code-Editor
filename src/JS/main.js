@@ -2,6 +2,24 @@ var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
 sidebarHandler.init(document.getElementById("sideMenu"));
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+
+  window.onerror = function (message, source, lineno, colno, error) {
+    Toast.fire({
+        icon: "error",
+        title: "An error occured: " + message
+    });
+};
 
 var _data = {
     "currentCreatePath": "/",
@@ -44,7 +62,6 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
             element.path = element.path.replace(e.detail.oldPath, e.detail.absPath);
         }
     });
-    console.log(_data.filesOpened);
 })
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
     //open it in top bar
@@ -122,7 +139,11 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
     });
 });
 document.getElementById('newFile').addEventListener('click', function () {
+    try{
     sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
+    }catch(e){
+        console.log(e);
+    }
 });
 document.getElementById('newFolder').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath);

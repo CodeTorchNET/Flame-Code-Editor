@@ -11,6 +11,10 @@
     --selectedItemBorder: #036cbc;
 }
 
+.swal2-popup.swal2-toast {
+    box-shadow: 0 0 0.625em var(--main-background-border) !important;
+}
+
 body {
     margin: 0px;
     font-family: Roboto;
