@@ -19,6 +19,7 @@ function listFilesRecursively($subfolder, $OGPath)
     foreach ($files as $file) {
         if (is_dir($file)) {
             $Finalfile = str_replace($OGPath . '/', '', $file);
+            $Finalfile = substr($Finalfile, 0, -strlen(basename($file)));
             if($Finalfile == ''){
                 $Finalfile = '/';
             }
@@ -28,7 +29,7 @@ function listFilesRecursively($subfolder, $OGPath)
             //add the directory to the file list
             $fileInfoArray[] = [
                 'PATH' => $Finalfile,
-                'FOLDER/FILE' => 'FOLDER',
+                'TYPE' => 'folder',
                 'FILENAME' => basename($file)
             ];
             // If $file is a directory, recursively call the function
@@ -37,7 +38,7 @@ function listFilesRecursively($subfolder, $OGPath)
             //remove the whole subfolder path from the file path
             $file = str_replace($OGPath . '/', '', $file);
             $fileName = basename($file);
-            $file = str_replace($fileName, '', $file);
+            $file = substr($file, 0, -strlen($fileName));
             if($file == ''){
                 $file = '/';
             }
@@ -46,7 +47,7 @@ function listFilesRecursively($subfolder, $OGPath)
             }
             $fileInfoArray[] = [
                 'PATH' => $file,
-                'FOLDER/FILE' => is_dir($file) ? 'FOLDER' : 'FILE',
+                'TYPE' => 'file',
                 'FILENAME' => $fileName
             ];
         }
