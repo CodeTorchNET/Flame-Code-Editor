@@ -3,7 +3,19 @@
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
-sidebarHandler.init(document.getElementById("sideMenu"), new fileContentManager());
+var FCM = new fileContentManager();
+FCM.init('1');
+FCM.loadFileStructure().then(function (data) {
+    sidebarHandler.init(document.getElementById("sideMenu"), FCM);
+    for(var i = 0; i < data.length; i++){
+        sidebarHandler.add(data[i].PATH,data[i].FILENAME,data[i].TYPE);
+    }
+}).catch(function (error) {
+    Toast.fire({
+        icon: "error",
+        title: "An error occured while trying to load the project: " + error
+    });
+});
 var editorHandler = new Editor();
 editorHandler.init(document.getElementById("mainContent"));
 
@@ -14,12 +26,12 @@ const Toast = Swal.mixin({
     timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
     }
-  });
+});
 
-  window.onerror = function (message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
     Toast.fire({
         icon: "error",
         title: "An error occured: " + message
@@ -60,7 +72,7 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
         filePath = element.path.split('/');
         filePath.pop();
         filePath = filePath.join('/');
-        if(filePath == ''){
+        if (filePath == '') {
             filePath = '/';
         }
         if (filePath.startsWith(e.detail.oldPath)) {
@@ -93,18 +105,18 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
         //set active
         topMenuHandler.setActive(topMenuId, true);
     }
-    editorHandler.renderFileEditor('Loading...'+e.detail.id,editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+    editorHandler.renderFileEditor('Loading...' + e.detail.id, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
 });
-document.getElementById('topMenu').addEventListener('tabChanged',function(e){
+document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
     //find the path
     var Id = null;
-    _data.filesOpened.forEach(function(element){
-        if(element.topMenuId == e.detail.id){
+    _data.filesOpened.forEach(function (element) {
+        if (element.topMenuId == e.detail.id) {
             Id = element.SidebarId;
         }
     });
     sidebarHandler.setActive(Id);
-    editorHandler.renderFileEditor('Loading...'+Id,editorHandler.languageEquivalent(Id.split('.').pop()));
+    editorHandler.renderFileEditor('Loading...' + Id, editorHandler.languageEquivalent(Id.split('.').pop()));
 })
 //NEEDS
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
@@ -149,9 +161,9 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
     });
 });
 document.getElementById('newFile').addEventListener('click', function () {
-    try{
-    sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
-    }catch(e){
+    try {
+        sidebarHandler.renderAdd(_data.currentCreatePath, 'file');
+    } catch (e) {
         console.log(e);
     }
 });

@@ -11,7 +11,7 @@ class Sidebar {
                 this._data.target = el;
                 if (FCM == undefined) {
                     throw new Error("No fileContentManager provided")
-                } else if (typeof FCM != 'object') {
+                } else if (typeof FCM == 'object') {
                     if(FCM instanceof fileContentManager){
                     this._data.fileContentManager = fileContentManager;
                     }else{
@@ -37,7 +37,7 @@ class Sidebar {
         this.add = function (path, name, type = 'folder', icon_name) {
             if (type == 'folder') {
                 if (name.includes('/') || name.includes('.') || name.includes(' ')) {
-                    throw new Error("Folder names can't contain / or .")
+                    throw new Error("Folder names can't contain / or . (Given Folder: " + name + ')')
                 }
                 //check if folder name already taken
                 var div = document.createElement('div');
@@ -324,7 +324,9 @@ class Sidebar {
                 for (var i = 0; i < path.length; i++) {
                     var index = findInArray(currentDepth, path[i]);
                     if (index == -1) {
-                        throw new Error("Path not found")
+                        //create folder
+                        this.add(path.slice(0, i).join('/'), path[i], 'folder');
+                        index = findInArray(currentDepth, path[i]);
                     }
                     currentDepthID = currentDepth[index].id;
                     currentDepth = currentDepth[index].children;
