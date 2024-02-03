@@ -36,8 +36,8 @@ class Sidebar {
         }
         this.add = function (path, name, type = 'folder', icon_name) {
             if (type == 'folder') {
-                if (name.includes('/') || name.includes('.') || name.includes(' ')) {
-                    throw new Error("Folder names can't contain / or . (Given Folder: " + name + ')')
+                if (name.includes('/') || name.includes(' ')) {
+                    throw new Error("Folder names can't contain / or spaces (Given Folder: " + name + ')')
                 }
                 //check if folder name already taken
                 var div = document.createElement('div');
@@ -88,7 +88,7 @@ class Sidebar {
                     this._data.target.dispatchEvent(new CustomEvent(action, { detail: { id: div.id, path: currentCalculatedPath } }));
 
                 }.bind(this));
-                this._rightClick(div.children[0]);
+                this._rightClick(div.children[0],'folder');
                 //add to current files
                 var fileData = {
                     name: name,
@@ -121,7 +121,7 @@ class Sidebar {
 
             } else if (type == 'file') {
                 if (name.includes('/') || name.includes(' ')) {
-                    throw new Error("File names can't contain /")
+                    throw new Error("File names can't contain / or spaces")
                 }
                 var div = document.createElement('div');
                 if (this._data.activeFile != null) {
@@ -151,7 +151,7 @@ class Sidebar {
                 }
                 path = this._handlePaths(path);
                 //add right click menu
-                this._rightClick(div);
+                this._rightClick(div,'file');
                 //add click action
                 div.addEventListener('click', function () {
                     if (this._data.activeFile != null) {
@@ -262,10 +262,7 @@ class Sidebar {
                                 return;
                             } else {
                                 //createFile file
-                                if (input.value.split('.')[1] == undefined) {
-                                    throw new Error("File name must contain an extension")
-                                }
-                                var finalID = this.add(path, input.value, type, input.value.split('.')[1]);
+                                var finalID = this.add(path, input.value, type, input.value.split('.').pop());
                                 //delete this
                                 div.remove();
                                 //dispatch fileOpened event
@@ -273,8 +270,8 @@ class Sidebar {
                             }
                         } else {
                             //change icon   
-                            if (this._data.fileIcons[input.value.split('.')[1]] != undefined) {
-                                img.src = "/assets/" + this._data.fileIcons[input.value.split('.')[1]];
+                            if (this._data.fileIcons[input.value.split('.').pop()] != undefined) {
+                                img.src = "/assets/" + this._data.fileIcons[input.value.split('.').pop()];
                             } else {
                                 img.src = "/assets/text.svg";
                             }
@@ -343,7 +340,7 @@ class Sidebar {
                 }
                 return currentDepthID;
             },
-            this._rightClick = function (element) {
+            this._rightClick = function (element,type = 'file') {
                 element.addEventListener('contextmenu', function (e) {
                     //check if right click menu exists
                     if (document.getElementsByClassName('rightClick').length != 0) {
@@ -403,7 +400,7 @@ class Sidebar {
                                     return;
                                 } else {
                                     //rename file
-                                    this.renameFile(currentCalculatedPath, input.value);
+                                    this.renameFile(currentCalculatedPath, input.value,type);
                                     //remove input and add p
                                     element.children[1].outerHTML = '<p>' + input.value + '</p>';
                                 }
@@ -496,7 +493,7 @@ class Sidebar {
                     parent.children[1].children[childNumber].remove();
                 }
             },
-            this.renameFile = function (path, newName) {
+            this.renameFile = function (path, newName,type = 'file') {
                 if (newName.includes('/')) {
                     throw new Error("File names can't contain /")
                 }
@@ -526,7 +523,7 @@ class Sidebar {
                 }
                 //check if name is already taken
                 for (var i = 0; i < currentDepth.length; i++) {
-                    if (currentDepth[i].name == newName && ((currentDepth[i].type == 'file' && fileName.includes('.')) || (currentDepth[i].type == 'folder' && !fileName.includes('.')))) {
+                    if (currentDepth[i].name == newName && ((currentDepth[i].type == 'file' && type == 'file') || (currentDepth[i].type == 'folder' && !type == 'file'))) {
                         throw new Error("Name already taken")
                     }
                 }
@@ -541,11 +538,11 @@ class Sidebar {
                 var parent = document.getElementById(currentDepthID);
                 var actionName = 'file';
                 if (path.length == 0) {
-                    if (fileName.includes('.')) {
+                    if (type == 'file') {
                         parent.children[childNumber].children[1].innerHTML = newName;
                         //change icon
-                        if (this._data.fileIcons[newName.split('.')[1]] != undefined) {
-                            parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.')[1]];
+                        if (this._data.fileIcons[newName.split('.').pop()] != undefined) {
+                            parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.').pop()];
                         } else {
                             parent.children[childNumber].children[0].src = "/assets/text.svg";
 
@@ -555,7 +552,7 @@ class Sidebar {
                         parent.children[childNumber].children[0].children[1].innerHTML = newName;
                     }
                 } else {
-                    if (fileName.includes('.')) {
+                    if (type == 'file') {
                         parent.children[1].children[childNumber].children[1].innerHTML = newName;
                     } else {
                         actionName = 'folder';
