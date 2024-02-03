@@ -1,2 +1,4 @@
 .htaccess
 Old
+src/projects
+.DS_Store
