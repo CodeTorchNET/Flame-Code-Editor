@@ -7,8 +7,8 @@ var FCM = new fileContentManager();
 FCM.init('1');
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
-    for(var i = 0; i < data.length; i++){
-        sidebarHandler.add(data[i].PATH,data[i].FILENAME,data[i].TYPE);
+    for (var i = 0; i < data.length; i++) {
+        sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE);
     }
 }).catch(function (error) {
     Toast.fire({
@@ -105,20 +105,35 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
         //set active
         topMenuHandler.setActive(topMenuId, true);
     }
-    editorHandler.renderFileEditor('Loading...' + e.detail.id, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+    FCM.loadFile(e.detail.path).then(function (data) {
+        editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to load the file: " + error
+        });
+    });
 });
 document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
     //find the path
     var Id = null;
+    var path = null;
     _data.filesOpened.forEach(function (element) {
         if (element.topMenuId == e.detail.id) {
             Id = element.SidebarId;
+            path = element.path;
         }
     });
     sidebarHandler.setActive(Id);
-    editorHandler.renderFileEditor('Loading...' + Id, editorHandler.languageEquivalent(Id.split('.').pop()));
+    FCM.loadFile(path).then(function (data) {
+        editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(path.split('.').pop()));
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to load the file: " + error
+        });
+    });
 })
-//NEEDS
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     var Id = null;
     var index = null;
@@ -142,6 +157,8 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
     });
     _data.filesOpened.splice(index, 1);
     topMenuHandler.remove(Id);
+    editorHandler.renderWelcome();
+    //FCM.deleteFile(e.detail.path);
 });
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
@@ -159,6 +176,10 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
     toRemove.forEach(function (element) {
         topMenuHandler.remove(element);
     });
+});
+
+document.addEventListener('fileEdited', function (e) {
+    topMenuHandler.changeState(topMenuHandler._data.activeElement,true);
 });
 document.getElementById('newFile').addEventListener('click', function () {
     try {

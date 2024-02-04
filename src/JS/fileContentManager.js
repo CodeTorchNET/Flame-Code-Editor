@@ -40,7 +40,34 @@ class fileContentManager {
                 });
             },
             this.loadFile = function (file) {
+                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                    if (this._data.offloadedFiles[i].path == file) {
+                        return new Promise((resolve, reject) => {
+                            resolve(this._data.offloadedFiles[i].content)
+                        });
+                    }
+                }
                 // Load the file from the remote
+                return new Promise((resolve, reject) => {
+                    fetch('/backend/loadFile.php?PID='+this._data.projectID+'&PATH='+file, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            throw new Error('Failed to load file');
+                        }
+                    }).then(data => {
+                        this._data.offloadedFiles.push({path: file, content: data, syncedWithRemote: true})
+                        resolve(data);
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        reject(error);
+                    });
+                });
             },
             this.renameFile = function (file) {//file/folder
                 // Rename the file on the remote
@@ -49,10 +76,14 @@ class fileContentManager {
                 // Delete the file from the remote
             },
             this.saveFile = function (file) {
-                // Save the file to the remote
+                // Save the file temporarily
             },
+            this.pushFileToRemote = function (file) {
+                // Push the file to the remote
+            }
             this._data = {
-                projectID: null
+                projectID: null,
+                offloadedFiles: [],
             }
     }
 }

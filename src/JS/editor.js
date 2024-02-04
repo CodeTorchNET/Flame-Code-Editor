@@ -28,6 +28,7 @@ class Editor {
                     });
                     editor.getModel().onDidChangeContent(function(event) {
                         // Handle the content change event
+                        document.dispatchEvent(new CustomEvent('fileEdited', {detail: {}}));
                         console.log('Content changed:', event);
                     });
                 });            

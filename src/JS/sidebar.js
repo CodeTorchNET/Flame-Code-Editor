@@ -433,6 +433,9 @@ class Sidebar {
                         if (element.className.includes('file')) {
                             //add name to end of path
                             currentCalculatedPath += '/' + element.children[1].innerHTML;
+                            if(currentCalculatedPath[0] != '/'){
+                                currentCalculatedPath = '/'+currentCalculatedPath;
+                            }
                             this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
                         } else {
                             currentCalculatedPath = '/' + currentCalculatedPath + '/';
