@@ -11,7 +11,7 @@
 }
 
 #sideMenu{
-    width:min-content;
+    width:inherit;
     overflow: hidden;
 }
 .sideMenuWrapper{

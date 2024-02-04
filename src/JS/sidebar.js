@@ -36,8 +36,8 @@ class Sidebar {
         }
         this.add = function (path, name, type = 'folder', icon_name, addedViaInput = false) {
             if (type == 'folder') {
-                if (name.includes('/') || name.includes(' ')) {
-                    throw new Error("Folder names can't contain / or spaces (Given Folder: " + name + ')')
+                if (name.includes('/')) {
+                    throw new Error("Folder names can't contain / (Given Folder: " + name + ')')
                 }
                 //check if folder name already taken
                 var div = document.createElement('div');
@@ -124,8 +124,8 @@ class Sidebar {
                 return div.id;
 
             } else if (type == 'file') {
-                if (name.includes('/') || name.includes(' ')) {
-                    throw new Error("File names can't contain / or spaces")
+                if (name.includes('/')) {
+                    throw new Error("File names can't contain /")
                 }
                 var div = document.createElement('div');
                 if (this._data.activeFile != null) {

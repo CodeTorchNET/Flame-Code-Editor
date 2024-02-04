@@ -77,6 +77,34 @@ class fileContentManager {
             },
             this.deleteFile = function (file) {//file/folder
                 // Delete the file from the remote
+                return new Promise((resolve, reject) => {
+                    if(typeof file == "undefined"){
+                        reject("Invalid parameters");
+                    }
+                    if(file == ''){
+                        reject("Invalid file");
+                    }
+                    fetch('/backend/deleteFile.php?PID='+this._data.projectID+'&PATH='+file, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                                if (this._data.offloadedFiles[i].path == file) {
+                                    this._data.offloadedFiles.splice(i, 1);
+                                    resolve();
+                                }
+                            }
+                        } else {
+                            throw new Error('Failed to delete file');
+                            reject();
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
             },
             this.createFile = function (path,name,type){
                 //create new file at remote
