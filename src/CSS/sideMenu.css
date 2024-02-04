@@ -6,8 +6,16 @@
     padding: 20px;
     padding-left: 12px;
     overflow-x: hidden;
-    overflow-y: scroll;
     margin: 1px solid var(--main-background-border);
+}
+
+#sideMenu{
+    width:min-content;
+    overflow: hidden;
+}
+.sideMenuWrapper{
+    overflow-y: scroll;
+    margin-bottom: 20px;
 }
 
 .sideMenu .item {
