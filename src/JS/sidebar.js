@@ -12,9 +12,9 @@ class Sidebar {
                 if (FCM == undefined) {
                     throw new Error("No fileContentManager provided")
                 } else if (typeof FCM == 'object') {
-                    if(FCM instanceof fileContentManager){
-                    this._data.fileContentManager = fileContentManager;
-                    }else{
+                    if (FCM instanceof fileContentManager) {
+                        this._data.fileContentManager = fileContentManager;
+                    } else {
                         throw new Error("FCM should be an instance of fileContentManager")
                     }
                 } else {
@@ -88,7 +88,7 @@ class Sidebar {
                     this._data.target.dispatchEvent(new CustomEvent(action, { detail: { id: div.id, path: currentCalculatedPath } }));
 
                 }.bind(this));
-                this._rightClick(div.children[0],'folder');
+                this._rightClick(div.children[0], 'folder');
                 //add to current files
                 var fileData = {
                     name: name,
@@ -116,9 +116,9 @@ class Sidebar {
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
                 }
-                if(addedViaInput){
-                //dispatch event
-                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name,type:'folder' } }));
+                if (addedViaInput) {
+                    //dispatch event
+                    this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name, type: 'folder' } }));
                 }
                 //append to target
                 return div.id;
@@ -155,7 +155,7 @@ class Sidebar {
                 }
                 path = this._handlePaths(path);
                 //add right click menu
-                this._rightClick(div,'file');
+                this._rightClick(div, 'file');
                 //add click action
                 div.addEventListener('click', function () {
                     if (this._data.activeFile != null) {
@@ -190,9 +190,9 @@ class Sidebar {
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
                 }
-                if(addedViaInput){
-                //dispatch event
-                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name,type:'file' } }));
+                if (addedViaInput) {
+                    //dispatch event
+                    this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name, type: 'file' } }));
                 }
                 return div.id;
             } else {
@@ -345,7 +345,7 @@ class Sidebar {
                 }
                 return currentDepthID;
             },
-            this._rightClick = function (element,type = 'file') {
+            this._rightClick = function (element, type = 'file') {
                 element.addEventListener('contextmenu', function (e) {
                     //check if right click menu exists
                     if (document.getElementsByClassName('rightClick').length != 0) {
@@ -405,7 +405,7 @@ class Sidebar {
                                     return;
                                 } else {
                                     //rename file
-                                    this.renameFile(currentCalculatedPath, input.value,type);
+                                    this.renameFile(currentCalculatedPath, input.value, type);
                                     //remove input and add p
                                     element.children[1].outerHTML = '<p>' + input.value + '</p>';
                                 }
@@ -422,33 +422,42 @@ class Sidebar {
                     div.children[1].addEventListener('click', function () {
                         //remove popup
                         div.remove();
-                        //find parent and calculate path
-                        var currentCalculatedPath = [];
-                        var parent = element.parentNode;
-                        while (parent.id != 'sideMenu') {
-                            if (parent.className.includes('itemParent')) {
-                                currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                        Swal.fire({
+                            title: "Are you sure you want to delete "+element.children[1].innerHTML+"?",
+                            text: "This CANNOT be undone",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, delete it",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                //find parent and calculate path
+                                var currentCalculatedPath = [];
+                                var parent = element.parentNode;
+                                while (parent.id != 'sideMenu') {
+                                    if (parent.className.includes('itemParent')) {
+                                        currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                                    }
+                                    parent = parent.parentNode;
+                                }
+                                currentCalculatedPath.reverse();
+                                //join path
+                                currentCalculatedPath = currentCalculatedPath.join('/');
+                                //check if file or folder
+                                if (element.className.includes('file')) {
+                                    //add name to end of path
+                                    currentCalculatedPath += '/' + element.children[1].innerHTML;
+                                    if (currentCalculatedPath[0] != '/') {
+                                        currentCalculatedPath = '/' + currentCalculatedPath;
+                                    }
+                                    this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
+                                } else {
+                                    currentCalculatedPath = '/' + currentCalculatedPath + '/';
+                                    this._data.target.dispatchEvent(new CustomEvent('folderDeleted', { detail: { path: currentCalculatedPath } }));
+                                }
+                                //dispatch event
+                                //remove file
+                                this.deleteFile(currentCalculatedPath);
                             }
-                            parent = parent.parentNode;
-                        }
-                        currentCalculatedPath.reverse();
-                        //join path
-                        currentCalculatedPath = currentCalculatedPath.join('/');
-                        //check if file or folder
-                        if (element.className.includes('file')) {
-                            //add name to end of path
-                            currentCalculatedPath += '/' + element.children[1].innerHTML;
-                            if(currentCalculatedPath[0] != '/'){
-                                currentCalculatedPath = '/'+currentCalculatedPath;
-                            }
-                            this._data.target.dispatchEvent(new CustomEvent('fileDeleted', { detail: { path: currentCalculatedPath } }));
-                        } else {
-                            currentCalculatedPath = '/' + currentCalculatedPath + '/';
-                            this._data.target.dispatchEvent(new CustomEvent('folderDeleted', { detail: { path: currentCalculatedPath } }));
-                        }
-                        //dispatch event
-                        //remove file
-                        this.deleteFile(currentCalculatedPath);
+                        });
                     }.bind(this));
                     div.addEventListener('contextmenu', function (e) {
                         e.preventDefault();
@@ -501,7 +510,7 @@ class Sidebar {
                     parent.children[1].children[childNumber].remove();
                 }
             },
-            this.renameFile = function (path, newName,type = 'file') {
+            this.renameFile = function (path, newName, type = 'file') {
                 if (newName.includes('/')) {
                     throw new Error("File names can't contain /")
                 }
