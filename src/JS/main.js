@@ -24,19 +24,19 @@ document.addEventListener('keydown', function (event) {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         // Prevent the default browser save action
         event.preventDefault();
-        if(_data.currentOpenedFile != null){
+        if (_data.currentOpenedFile != null) {
             FCM.pushFileToRemote(_data.currentOpenedFile).then(function () {
-            topMenuHandler.changeState(topMenuHandler._data.activeElement, false);
-            Toast.fire({
-                icon: "success",
-                title: "File saved"
+                topMenuHandler.changeState(topMenuHandler._data.activeElement, false);
+                Toast.fire({
+                    icon: "success",
+                    title: "File saved"
+                });
+            }.bind(this)).catch(function (error) {
+                Toast.fire({
+                    icon: "error",
+                    title: "An error occured while trying to save the file."
+                });
             });
-        }.bind(this)).catch(function (error) {
-            Toast.fire({
-                icon: "error",
-                title: "An error occured while trying to save the file."
-            });
-        });
         }
     }
 });
@@ -235,6 +235,42 @@ document.getElementById('newFile').addEventListener('click', function () {
     } catch (e) {
         console.log(e);
     }
+});
+document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
+    Path = '/' + e.detail.path.join('/');
+    if(Path[Path.length - 1] != '/'){
+        Path += '/';
+    }
+    console.log(Path);
+    FCM.createFile(Path, e.detail.name, e.detail.type).then(function () {
+        if (e.detail.type == 'file') {
+            const topMenuId = topMenuHandler.add(e.detail.name, e.detail.type, false);
+            _data.filesOpened.push({
+                name: e.detail.name,
+                path: Path + e.detail.name,
+                icon_name: e.detail.icon_name,
+                topMenuId: topMenuId,
+                SidebarId: e.detail.id
+            });
+            //set active
+            topMenuHandler.setActive(topMenuId, true);
+            _data.currentOpenedFile = e.detail.path;
+            FCM.loadFile(Path + e.detail.name).then(function (data) {
+                editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+            }).catch(function (error) {
+                Toast.fire({
+                    icon: "error",
+                    title: "An error occured while trying to load the file: " + error
+                });
+            });
+        }
+    }).catch(function (error) {
+        console.log('failed', error)
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to create the " + type + ": " + error
+        });
+    });
 });
 document.getElementById('newFolder').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath);

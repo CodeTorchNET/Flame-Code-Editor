@@ -40,6 +40,9 @@ class fileContentManager {
                 });
             },
             this.loadFile = function (file) {
+                if(file == ''){
+                    file = '/';
+                }
                 for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                     if (this._data.offloadedFiles[i].path == file) {
                         return new Promise((resolve, reject) => {
@@ -75,6 +78,34 @@ class fileContentManager {
             this.deleteFile = function (file) {//file/folder
                 // Delete the file from the remote
             },
+            this.createFile = function (path,name,type){
+                //create new file at remote
+            
+                return new Promise((resolve, reject) => {
+                    if(typeof path == "undefined" || typeof name == "undefined" || typeof type == "undefined"){
+                        reject("Invalid parameters");
+                    }
+                    if(type != "file" && type != "folder"){
+                        reject("Invalid type");
+                    }
+                    fetch('/backend/createFile.php?PID='+this._data.projectID+'&path='+path+'&name='+name+'&type='+type, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            this._data.offloadedFiles.push({path: path+name, content: "", syncedWithRemote: true});
+                            resolve();
+                        } else {
+                            throw new Error('Failed to create file');
+                            reject();
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            }
             this.saveFile = function (file,content) {
                 // Save the file temporarily
                 for (var i = 0; i < this._data.offloadedFiles.length; i++) {

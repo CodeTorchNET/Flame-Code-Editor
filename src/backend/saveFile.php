@@ -20,6 +20,11 @@ if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
     exit();
 }
+//check if the file exists
+if (!file_exists('../projects/' . $PROJECTID . $PATH)) {
+    echo json_encode(array('status' => 'false', 'message' => 'File does not exist'));
+    exit();
+}
 file_put_contents('../projects/' . $PROJECTID . $PATH, $file_data);
 echo json_encode(array('status' => 'true', 'message' => 'File saved'));
 }else{

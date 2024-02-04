@@ -34,7 +34,7 @@ class Sidebar {
                 throw new Error("Element is not an object")
             }
         }
-        this.add = function (path, name, type = 'folder', icon_name) {
+        this.add = function (path, name, type = 'folder', icon_name, addedViaInput = false) {
             if (type == 'folder') {
                 if (name.includes('/') || name.includes(' ')) {
                     throw new Error("Folder names can't contain / or spaces (Given Folder: " + name + ')')
@@ -116,6 +116,10 @@ class Sidebar {
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
                 }
+                if(addedViaInput){
+                //dispatch event
+                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name,type:'folder' } }));
+                }
                 //append to target
                 return div.id;
 
@@ -186,10 +190,11 @@ class Sidebar {
                     var parent = document.getElementById(id);
                     parent.children[1].appendChild(div);
                 }
+                if(addedViaInput){
                 //dispatch event
-                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id } }));
+                this._data.target.dispatchEvent(new CustomEvent('fileAdded', { detail: { id: div.id, path: path, name: name,type:'file' } }));
+                }
                 return div.id;
-
             } else {
                 throw new Error("Unknown type (expected 'folder' or 'file') got " + type)
             }
@@ -221,7 +226,7 @@ class Sidebar {
                                 return;
                             } else {
                                 //createFile file
-                                this.add(path, input.value, type);
+                                this.add(path, input.value, type, '', true);
                                 //delete this
                                 div.remove();
                             }
@@ -262,11 +267,11 @@ class Sidebar {
                                 return;
                             } else {
                                 //createFile file
-                                var finalID = this.add(path, input.value, type, input.value.split('.').pop());
+                                var finalID = this.add(path, input.value, type, input.value.split('.').pop(), true);
                                 //delete this
                                 div.remove();
                                 //dispatch fileOpened event
-                                this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1], id: finalID } }));
+                                //this._data.target.dispatchEvent(new CustomEvent('fileOpened', { detail: { path: path + input.value, name: input.value, icon_name: input.value.split('.')[1], id: finalID } }));
                             }
                         } else {
                             //change icon   
