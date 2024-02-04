@@ -1,7 +1,8 @@
 .sideMenu {
     background-color: var(--main-background-border);
+    /*height: fit-content;*/
     height: 100%;
-    width: 168px;
+    min-width: 168px;
     padding: 20px;
     padding-left: 12px;
     overflow-x: hidden;
@@ -62,6 +63,22 @@
     height: auto;
     margin-top: 0px;
 }
+/*
+.sideMenu .itemParent:not(.active) > .itemSubContent > .item {
+    height: 0px;
+    visibility: hidden;
+    padding: 0px;
+}
+.sideMenu .itemParent:not(.active) > .itemSubContent > .itemParent{
+    height: 0px;
+    visibility: hidden;
+    padding: 0px;
+}
+.sideMenu .itemParent.active>.itemSubContent>.item {
+    height: auto;
+    visibility: visible;
+}
+*/
 
 .sideMenu .itemSubContent {
     margin-left: 7px;

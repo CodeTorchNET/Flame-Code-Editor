@@ -170,3 +170,11 @@ document.getElementById('newFile').addEventListener('click', function () {
 document.getElementById('newFolder').addEventListener('click', function () {
     sidebarHandler.renderAdd(_data.currentCreatePath);
 });
+
+/*
+document.getElementsByClassName('sideMenu')[0].style.minHeight = window.innerHeight + 'px';
+//on resize
+document.body.onresize = function () {
+    document.getElementsByClassName('sideMenu')[0].style.minHeight = window.innerHeight + 'px';
+}
+*/
