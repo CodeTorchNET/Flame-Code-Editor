@@ -75,8 +75,15 @@ class fileContentManager {
             this.deleteFile = function (file) {//file/folder
                 // Delete the file from the remote
             },
-            this.saveFile = function (file) {
+            this.saveFile = function (file,content) {
                 // Save the file temporarily
+                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                    if (this._data.offloadedFiles[i].path == file) {
+                        this._data.offloadedFiles[i].content = content;
+                        this._data.offloadedFiles[i].syncedWithRemote = false;
+                        return;
+                    }
+                }
             },
             this.pushFileToRemote = function (file) {
                 // Push the file to the remote

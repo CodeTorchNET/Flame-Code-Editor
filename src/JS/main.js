@@ -115,6 +115,7 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
     });
 });
 document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
+    console.log(e.detail)
     //find the path
     var Id = null;
     var path = null;
@@ -180,6 +181,13 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
 
 document.addEventListener('fileEdited', function (e) {
     topMenuHandler.changeState(topMenuHandler._data.activeElement,true);
+    var currentOpenedPath = null;
+    _data.filesOpened.forEach(function (element) {
+        if (element.topMenuId == topMenuHandler._data.activeElement) {
+            currentOpenedPath = element.path;
+        }
+    });
+    FCM.saveFile(currentOpenedPath, editorHandler.getFileContent());
 });
 document.getElementById('newFile').addEventListener('click', function () {
     try {
