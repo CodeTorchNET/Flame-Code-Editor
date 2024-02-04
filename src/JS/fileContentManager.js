@@ -87,6 +87,30 @@ class fileContentManager {
             },
             this.pushFileToRemote = function (file) {
                 // Push the file to the remote
+                return new Promise((resolve, reject) => {
+                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                    if (this._data.offloadedFiles[i].path == file) {
+                        const increment = i;
+                        fetch('/backend/saveFile.php?PID='+this._data.projectID+'&PATH='+file, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: this._data.offloadedFiles[i].content
+                        }).then(response => {
+                            if (response.ok) {
+                                this._data.offloadedFiles[increment].syncedWithRemote = true;
+                                resolve();
+                            } else {
+                                throw new Error('Failed to save file');
+                                reject();
+                            }
+                        }).catch(error => {
+                            console.error('Error:', error);
+                        });
+                    }
+                }
+            });
             }
             this._data = {
                 projectID: null,

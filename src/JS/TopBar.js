@@ -12,7 +12,10 @@ class TopBar {
                     animation: 150,
                     draggable: ".Tab",
                     onChoose: function (evt) {
-                        this.setActive(evt.item.id);
+                        //check if already active
+                        if (!evt.item.classList.contains("active")) {
+                            this.setActive(evt.item.id);
+                        }
                     }.bind(this),
                 });
                 this._data.target = el

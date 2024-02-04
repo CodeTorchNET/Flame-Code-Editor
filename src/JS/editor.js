@@ -18,21 +18,22 @@ class Editor {
                 this._cleanUp();
                 this._data.currentScreen = 'editor';
                 const target = this._data.target;
-                var editor = this._data.editor;
                 require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.45.0/min/vs' }});
                 require(['vs/editor/editor.main'], function () {
-                    editor = monaco.editor.create(target, {
+                    this._data.editor = monaco.editor.create(target, {
                         value: value,
                         language: language,
                         theme: 'vs-dark',
                     });
-                    editor.getModel().onDidChangeContent(function(event) {
+                    this._data.editor.getModel().onDidChangeContent(function(event) {
                         // Handle the content change event
                         document.dispatchEvent(new CustomEvent('fileEdited', {detail: {}}));
-                        console.log('Content changed:', event);
                     });
-                });            
+                }.bind(this));            
             },
+            this.getFileContent = function () {
+                return this._data.editor.getValue();
+            }
             this.renderImageEditor = function () {
             },
             this.renderError = function () {
@@ -50,7 +51,7 @@ class Editor {
                     }
                 }
                 if (this._data.editor != null) {
-                    this._data.editor.despose();
+                    this._data.editor.dispose();
                     this._data.editor = null;
                 }
             },

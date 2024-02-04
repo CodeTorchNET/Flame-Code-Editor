@@ -19,6 +19,28 @@ FCM.loadFileStructure().then(function (data) {
 var editorHandler = new Editor();
 editorHandler.init(document.getElementById("mainContent"));
 
+document.addEventListener('keydown', function (event) {
+    // Check if Ctrl (or Cmd) key is pressed and the key is 'S'
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        // Prevent the default browser save action
+        event.preventDefault();
+        if(_data.currentOpenedFile != null){
+            FCM.pushFileToRemote(_data.currentOpenedFile).then(function () {
+            topMenuHandler.changeState(topMenuHandler._data.activeElement, false);
+            Toast.fire({
+                icon: "success",
+                title: "File saved"
+            });
+        }.bind(this)).catch(function (error) {
+            Toast.fire({
+                icon: "error",
+                title: "An error occured while trying to save the file."
+            });
+        });
+        }
+    }
+});
+
 const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -40,7 +62,8 @@ window.onerror = function (message, source, lineno, colno, error) {
 
 var _data = {
     "currentCreatePath": "/",
-    "filesOpened": []
+    "filesOpened": [],
+    'currentOpenedFile': null
 }
 
 document.getElementById("sideMenu").addEventListener('folderOpened', function (e) {
@@ -105,6 +128,7 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
         //set active
         topMenuHandler.setActive(topMenuId, true);
     }
+    _data.currentOpenedFile = e.detail.path;
     FCM.loadFile(e.detail.path).then(function (data) {
         editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
     }).catch(function (error) {
@@ -115,7 +139,6 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
     });
 });
 document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
-    console.log(e.detail)
     //find the path
     var Id = null;
     var path = null;
@@ -126,6 +149,7 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
         }
     });
     sidebarHandler.setActive(Id);
+    _data.currentOpenedFile = path;
     FCM.loadFile(path).then(function (data) {
         editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(path.split('.').pop()));
     }).catch(function (error) {
@@ -145,6 +169,8 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
         }
     });
     _data.filesOpened.splice(index, 1);
+    _data.currentOpenedFile = null;
+    editorHandler.renderWelcome();
 });
 //NEEDS
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
@@ -157,10 +183,18 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
         }
     });
     _data.filesOpened.splice(index, 1);
-    topMenuHandler.remove(Id);
-    editorHandler.renderWelcome();
+    console.log(Id)
+    if (Id != null) {
+        topMenuHandler.remove(Id);
+        _data.currentOpenedFile = null;
+        editorHandler.renderWelcome();
+    }
     //FCM.deleteFile(e.detail.path);
 });
+document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
+    console.log(e.detail);
+});
+
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
     //check every file and remove the ones that are in the folder
@@ -175,12 +209,18 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
         return !element.path.includes(e.detail.path);
     });
     toRemove.forEach(function (element) {
+        if (document.getElementById(element).className.includes('active')) {
+            //close the editor
+            _data.currentOpenedFile = null;
+            editorHandler.renderWelcome();
+        }
         topMenuHandler.remove(element);
     });
+    //Close files and editor if you need to, + send remote delete
 });
 
 document.addEventListener('fileEdited', function (e) {
-    topMenuHandler.changeState(topMenuHandler._data.activeElement,true);
+    topMenuHandler.changeState(topMenuHandler._data.activeElement, true);
     var currentOpenedPath = null;
     _data.filesOpened.forEach(function (element) {
         if (element.topMenuId == topMenuHandler._data.activeElement) {
