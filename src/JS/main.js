@@ -172,7 +172,6 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     _data.currentOpenedFile = null;
     editorHandler.renderWelcome();
 });
-//NEEDS
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
     var Id = null;
     var index = null;
@@ -183,13 +182,12 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
         }
     });
     _data.filesOpened.splice(index, 1);
-    console.log(Id)
     if (Id != null) {
         topMenuHandler.remove(Id);
         _data.currentOpenedFile = null;
         editorHandler.renderWelcome();
     }
-    //FCM.deleteFile(e.detail.path);
+    FCM.deleteFile(e.detail.path);
 });
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     console.log(e.detail);
@@ -216,6 +214,10 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
         }
         topMenuHandler.remove(element);
     });
+    if (e.detail.path[e.detail.path.length - 1] == '/') {
+        e.detail.path = e.detail.path.substring(0, e.detail.path.length - 1);
+    }
+    FCM.deleteFile(e.detail.path);
     //Close files and editor if you need to, + send remote delete
 });
 
@@ -238,7 +240,7 @@ document.getElementById('newFile').addEventListener('click', function () {
 });
 document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
     Path = '/' + e.detail.path.join('/');
-    if(Path[Path.length - 1] != '/'){
+    if (Path[Path.length - 1] != '/') {
         Path += '/';
     }
     console.log(Path);
@@ -283,3 +285,32 @@ document.body.onresize = function () {
     document.getElementsByClassName('sideMenu')[0].style.minHeight = window.innerHeight + 'px';
 }
 */
+var dragging = false;
+
+$('#sideMenuResize').mousedown(function (e) {
+    e.preventDefault();
+
+    dragging = true;
+    var sidebar = $('.sideMenu');
+    var ghostbar = $('<div>', {
+        id: 'ghostbar',
+        css: {
+            height: sidebar.outerHeight(),
+            top: sidebar.offset().top,
+            left: sidebar.offset().left
+        }
+    }).appendTo('body');
+
+    $(document).mousemove(function (e) {
+        ghostbar.css("left", e.pageX + 2);
+    });
+});
+
+$(document).mouseup(function (e) {
+    if (dragging) {
+        $('.sideMenu').css("width", e.pageX- 40);
+        $('#ghostbar').remove();
+        $(document).unbind('mousemove');
+        dragging = false;
+    }
+});

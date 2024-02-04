@@ -2,11 +2,12 @@
     background-color: var(--main-background-border);
     /*height: fit-content;*/
     height: 100%;
-    min-width: 168px;
+    min-width: 20%;
     padding: 20px;
     padding-left: 12px;
     overflow-x: hidden;
     margin: 1px solid var(--main-background-border);
+    transition: width 0.3s ease;
 }
 
 #sideMenu{
@@ -14,8 +15,32 @@
     overflow: hidden;
 }
 .sideMenuWrapper{
+    overflow-x: hidden;
     overflow-y: scroll;
     margin-bottom: 20px;
+}
+.sideMenuWrapperMain{
+    display: flex;
+}
+
+#sideMenuResize{
+    height: 100%;
+    min-width: 5px;
+    background-color: var(--main-background-border);
+    z-index: 100;
+}
+#sideMenuResize:hover{
+    cursor: ew-resize;
+    background-color: var(--selectedItemBorder);
+}
+
+#ghostbar{
+    width: 5px;
+    background-color: var(--selectedItemBorder);
+    height: 100%;
+    cursor: ew-resize;
+    position: absolute;
+    z-index: 100;
 }
 
 .sideMenu .item {

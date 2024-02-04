@@ -39,11 +39,16 @@ body {
 .topSideMenu svg {
     width: 1pc;
     height: 1pc;
-    margin-left: auto;
-    margin-right: auto;
     cursor: pointer;
 }
-
+#newFile{
+    margin-left: auto;
+    margin-right: 10px;
+}
+#newFolder{
+    margin-left: 0px;
+    margin-right: 20px;
+}
 .topSideMenu p {
     margin: 0px;
     margin-right: 20px;
