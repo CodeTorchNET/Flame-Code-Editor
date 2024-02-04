@@ -111,6 +111,14 @@ class fileContentManager {
                     }
                 }
             });
+            },
+            this.folderRename = function (folderPath, newName) {
+                // Rename all offloaded files that are in the folder
+                for(var x = 0; x < this._data.offloadedFiles.length; x++){
+                    if(this._data.offloadedFiles[x].path.startsWith(folderPath)){
+                        this._data.offloadedFiles[x].path = newName + this._data.offloadedFiles[x].path.substring(folderPath.length);
+                    }
+                }
             }
             this._data = {
                 projectID: null,

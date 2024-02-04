@@ -99,7 +99,7 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
             filePath = '/';
         }
         if (filePath.startsWith(e.detail.oldPath)) {
-            element.path = element.path.replace(e.detail.oldPath, e.detail.absPath);
+            element.path = e.detail.absPath + element.path.substring(e.detail.oldPath.length);
         }
     });
 })
