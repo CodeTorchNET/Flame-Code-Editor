@@ -28,7 +28,7 @@ class fileContentManager {
                             throw new Error('Failed to load file structure');
                         }
                     }).then(data => {
-                        if(data.status == "error"){
+                        if(data.status == "false"){
                             reject(data.message);
                         }else{
                         resolve(data.files);
@@ -91,15 +91,21 @@ class fileContentManager {
                         }
                     }).then(response => {
                         if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to delete file');
+                            reject();
+                        }
+                    }).then(data => {
+                        if(data.status == "false"){
+                            reject(data.message);
+                        }else{
                             for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                                 if (this._data.offloadedFiles[i].path == file) {
                                     this._data.offloadedFiles.splice(i, 1);
                                     resolve();
                                 }
                             }
-                        } else {
-                            throw new Error('Failed to delete file');
-                            reject();
                         }
                     }).catch(error => {
                         console.error('Error:', error);
@@ -123,11 +129,17 @@ class fileContentManager {
                         }
                     }).then(response => {
                         if (response.ok) {
-                            this._data.offloadedFiles.push({path: path+name, content: "", syncedWithRemote: true});
-                            resolve();
+                            return response.json();
                         } else {
                             throw new Error('Failed to create file');
                             reject();
+                        }
+                    }).then(data => {
+                        if(data.status == "false"){
+                            reject(data.message);
+                        }else{
+                            this._data.offloadedFiles.push({path: path+name, content: "", syncedWithRemote: true});
+                            resolve();
                         }
                     }).catch(error => {
                         console.error('Error:', error);
@@ -158,11 +170,17 @@ class fileContentManager {
                             body: this._data.offloadedFiles[i].content
                         }).then(response => {
                             if (response.ok) {
-                                this._data.offloadedFiles[increment].syncedWithRemote = true;
-                                resolve();
+                                return response.json();
                             } else {
                                 throw new Error('Failed to save file');
                                 reject();
+                            }
+                        }).then(data => {
+                            if(data.status == "false"){
+                                reject(data.message);
+                            }else{
+                                this._data.offloadedFiles[increment].syncedWithRemote = true;
+                                resolve();
                             }
                         }).catch(error => {
                             console.error('Error:', error);

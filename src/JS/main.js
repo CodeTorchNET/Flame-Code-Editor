@@ -104,33 +104,33 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
     });
 })
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
-    //open it in top bar
-    //check if it is already opened
-    var alreadyOpened = false;
-    var topMenuId = null;
-    _data.filesOpened.forEach(function (element) {
-        if (element.path == e.detail.path) {
-            alreadyOpened = true;
-            topMenuId = element.topMenuId;
-        }
-    });
-    if (alreadyOpened) {
-        topMenuHandler.setActive(topMenuId, true);
-    } else {
-        const topMenuId = topMenuHandler.add(e.detail.name, e.detail.icon_name, false)
-        _data.filesOpened.push({
-            name: e.detail.name,
-            path: e.detail.path,
-            icon_name: e.detail.icon_name,
-            topMenuId: topMenuId,
-            SidebarId: e.detail.id
-        });
-        //set active
-        topMenuHandler.setActive(topMenuId, true);
-    }
     _data.currentOpenedFile = e.detail.path;
     FCM.loadFile(e.detail.path).then(function (data) {
         editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+        //open it in top bar
+        //check if it is already opened
+        var alreadyOpened = false;
+        var topMenuId = null;
+        _data.filesOpened.forEach(function (element) {
+            if (element.path == e.detail.path) {
+                alreadyOpened = true;
+                topMenuId = element.topMenuId;
+            }
+        });
+        if (alreadyOpened) {
+            topMenuHandler.setActive(topMenuId, true);
+        } else {
+            const topMenuId = topMenuHandler.add(e.detail.name, e.detail.icon_name, false)
+            _data.filesOpened.push({
+                name: e.detail.name,
+                path: e.detail.path,
+                icon_name: e.detail.icon_name,
+                topMenuId: topMenuId,
+                SidebarId: e.detail.id
+            });
+            //set active
+            topMenuHandler.setActive(topMenuId, true);
+        }
     }).catch(function (error) {
         Toast.fire({
             icon: "error",
@@ -148,10 +148,10 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
             path = element.path;
         }
     });
-    sidebarHandler.setActive(Id);
-    _data.currentOpenedFile = path;
     FCM.loadFile(path).then(function (data) {
         editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(path.split('.').pop()));
+        sidebarHandler.setActive(Id);
+        _data.currentOpenedFile = path;
     }).catch(function (error) {
         Toast.fire({
             icon: "error",
@@ -173,21 +173,27 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     editorHandler.renderWelcome();
 });
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
-    var Id = null;
-    var index = null;
-    _data.filesOpened.forEach(function (element, i) {
-        if (element.path == e.detail.path) {
-            Id = element.topMenuId;
-            index = i;
+    FCM.deleteFile(e.detail.path).then(function () {
+        var Id = null;
+        var index = null;
+        _data.filesOpened.forEach(function (element, i) {
+            if (element.path == e.detail.path) {
+                Id = element.topMenuId;
+                index = i;
+            }
+        });
+        _data.filesOpened.splice(index, 1);
+        if (Id != null) {
+            topMenuHandler.remove(Id);
+            _data.currentOpenedFile = null;
+            editorHandler.renderWelcome();
         }
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to delete the file: " + error
+        });
     });
-    _data.filesOpened.splice(index, 1);
-    if (Id != null) {
-        topMenuHandler.remove(Id);
-        _data.currentOpenedFile = null;
-        editorHandler.renderWelcome();
-    }
-    FCM.deleteFile(e.detail.path);
 });
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     console.log(e.detail);
@@ -195,29 +201,35 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
-    //check every file and remove the ones that are in the folder
-    var toRemove = [];
-    _data.filesOpened.forEach(function (element, i) {
-        if (element.path.includes(e.detail.path)) {
-            toRemove.push(element.topMenuId);
+    FCM.deleteFile(e.detail.path).then(function () {
+        //check every file and remove the ones that are in the folder
+        var toRemove = [];
+        _data.filesOpened.forEach(function (element, i) {
+            if (element.path.includes(e.detail.path)) {
+                toRemove.push(element.topMenuId);
+            }
+        });
+        //remove from _data
+        _data.filesOpened = _data.filesOpened.filter(function (element) {
+            return !element.path.includes(e.detail.path);
+        });
+        toRemove.forEach(function (element) {
+            if (document.getElementById(element).className.includes('active')) {
+                //close the editor
+                _data.currentOpenedFile = null;
+                editorHandler.renderWelcome();
+            }
+            topMenuHandler.remove(element);
+        });
+        if (e.detail.path[e.detail.path.length - 1] == '/') {
+            e.detail.path = e.detail.path.substring(0, e.detail.path.length - 1);
         }
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to delete the folder: " + error
+        });
     });
-    //remove from _data
-    _data.filesOpened = _data.filesOpened.filter(function (element) {
-        return !element.path.includes(e.detail.path);
-    });
-    toRemove.forEach(function (element) {
-        if (document.getElementById(element).className.includes('active')) {
-            //close the editor
-            _data.currentOpenedFile = null;
-            editorHandler.renderWelcome();
-        }
-        topMenuHandler.remove(element);
-    });
-    if (e.detail.path[e.detail.path.length - 1] == '/') {
-        e.detail.path = e.detail.path.substring(0, e.detail.path.length - 1);
-    }
-    FCM.deleteFile(e.detail.path);
     //Close files and editor if you need to, + send remote delete
 });
 
@@ -308,7 +320,7 @@ $('#sideMenuResize').mousedown(function (e) {
 
 $(document).mouseup(function (e) {
     if (dragging) {
-        $('.sideMenu').css("width", e.pageX- 40);
+        $('.sideMenu').css("width", e.pageX - 40);
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         dragging = false;
