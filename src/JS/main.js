@@ -73,34 +73,59 @@ document.getElementById("sideMenu").addEventListener('folderClosed', function (e
     _data.currentCreatePath = '/';
 });
 document.getElementById("sideMenu").addEventListener('fileRenamed', function (e) {
-    //check if it is open if so rename it
-    _data.filesOpened.forEach(function (element) {
-        if (element.path == e.detail.oldPath) {
-            topMenuHandler.rename(element.topMenuId, e.detail.newName);
-        }
-    });
-    //rename element in _data
-    _data.filesOpened.forEach(function (element) {
-        if (element.path == e.detail.oldPath) {
-            element.name = e.detail.newName;
-            element.path = e.detail.absPath;
-        }
-    });
+    //path is equal to e.detail.oldPath substringed by the length of the old name (so only the path remains)
+    var path = e.detail.oldPath.substring(0, e.detail.oldPath.length - e.detail.oldName.length);
+    FCM.renameFile(path, e.detail.oldName, e.detail.newName).then(function () {
+        Toast.fire({
+            icon: "success",
+            title: "File renamed"
+        });
+        //check if it is open if so rename it
+        _data.filesOpened.forEach(function (element) {
+            if (element.path == e.detail.oldPath) {
+                topMenuHandler.rename(element.topMenuId, e.detail.newName);
+            }
+        });
+        //rename element in _data
+        _data.filesOpened.forEach(function (element) {
+            if (element.path == e.detail.oldPath) {
+                element.name = e.detail.newName;
+                element.path = e.detail.absPath;
+            }
+        });
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to rename the file/folder: " + error
+        });
+    })
 });
 document.getElementById("sideMenu").addEventListener('folderRenamed', function (e) {
     //HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY
-    //check if it all files are underneath renamed folder
-    _data.filesOpened.forEach(function (element) {
-        //check if it starts with the old path
-        filePath = element.path.split('/');
-        filePath.pop();
-        filePath = filePath.join('/');
-        if (filePath == '') {
-            filePath = '/';
-        }
-        if (filePath.startsWith(e.detail.oldPath)) {
-            element.path = e.detail.absPath + element.path.substring(e.detail.oldPath.length);
-        }
+    var path = e.detail.oldPath.substring(0, e.detail.oldPath.length - e.detail.oldName.length);
+    FCM.renameFile(path, e.detail.oldName, e.detail.newName, 'folder').then(function () {
+        Toast.fire({
+            icon: "success",
+            title: "File renamed"
+        });
+        //check if it all files are underneath renamed folder
+        _data.filesOpened.forEach(function (element) {
+            //check if it starts with the old path
+            filePath = element.path.split('/');
+            filePath.pop();
+            filePath = filePath.join('/');
+            if (filePath == '') {
+                filePath = '/';
+            }
+            if (filePath.startsWith(e.detail.oldPath)) {
+                element.path = e.detail.absPath + element.path.substring(e.detail.oldPath.length);
+            }
+        });
+    }).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to rename the folder: " + error
+        });
     });
 })
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
@@ -282,7 +307,7 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
         console.log('failed', error)
         Toast.fire({
             icon: "error",
-            title: "An error occured while trying to create the " + type + ": " + error
+            title: "An error occured while trying to create the File/Folder: " + error
         });
     });
 });

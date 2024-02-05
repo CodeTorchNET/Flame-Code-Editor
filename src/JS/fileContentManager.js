@@ -16,7 +16,7 @@ class fileContentManager {
             this.loadFileStructure = function () {
                 return new Promise((resolve, reject) => {
                     // Load the file structure from the remote
-                    fetch('/backend/loadProjectFileStructure.php?PID='+this._data.projectID, {
+                    fetch('/backend/loadProjectFileStructure.php?PID=' + this._data.projectID, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -28,10 +28,10 @@ class fileContentManager {
                             throw new Error('Failed to load file structure');
                         }
                     }).then(data => {
-                        if(data.status == "false"){
+                        if (data.status == "false") {
                             reject(data.message);
-                        }else{
-                        resolve(data.files);
+                        } else {
+                            resolve(data.files);
                         }
                     }).catch(error => {
                         console.error('Error:', error);
@@ -40,7 +40,7 @@ class fileContentManager {
                 });
             },
             this.loadFile = function (file) {
-                if(file == ''){
+                if (file == '') {
                     file = '/';
                 }
                 for (var i = 0; i < this._data.offloadedFiles.length; i++) {
@@ -52,7 +52,7 @@ class fileContentManager {
                 }
                 // Load the file from the remote
                 return new Promise((resolve, reject) => {
-                    fetch('/backend/loadFile.php?PID='+this._data.projectID+'&PATH='+file, {
+                    fetch('/backend/loadFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -64,7 +64,7 @@ class fileContentManager {
                             throw new Error('Failed to load file');
                         }
                     }).then(data => {
-                        this._data.offloadedFiles.push({path: file, content: data, syncedWithRemote: true})
+                        this._data.offloadedFiles.push({ path: file, content: data, syncedWithRemote: true })
                         resolve(data);
                     }).catch(error => {
                         console.error('Error:', error);
@@ -72,19 +72,52 @@ class fileContentManager {
                     });
                 });
             },
-            this.renameFile = function (file) {//file/folder
+            this.renameFile = function (PATH, oldName, newName, type = 'file') {//file/folder
                 // Rename the file on the remote
+                return new Promise((resolve, reject) => {
+                    if (typeof PATH == "undefined" || typeof oldName == "undefined" || typeof newName == "undefined") {
+                        reject("Invalid parameters");
+                    }
+                    fetch('/backend/renameFile.php?PID=' + this._data.projectID + '&PATH=' + PATH + '&ON=' + oldName + '&NN=' + newName, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Failed to rename file');
+                            reject();
+                        }
+                    }).then(data => {
+                        if (data.status == "false") {
+                            reject(data.message);
+                        } else {
+                            if (type == 'file') {
+                                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                                    if (this._data.offloadedFiles[i].path == PATH + oldName) {
+                                        this._data.offloadedFiles[i].path = PATH + newName;
+                                    }
+                                }
+                            }
+                            resolve();
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
             },
             this.deleteFile = function (file) {//file/folder
                 // Delete the file from the remote
                 return new Promise((resolve, reject) => {
-                    if(typeof file == "undefined"){
+                    if (typeof file == "undefined") {
                         reject("Invalid parameters");
                     }
-                    if(file == ''){
+                    if (file == '') {
                         reject("Invalid file");
                     }
-                    fetch('/backend/deleteFile.php?PID='+this._data.projectID+'&PATH='+file, {
+                    fetch('/backend/deleteFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -97,9 +130,9 @@ class fileContentManager {
                             reject();
                         }
                     }).then(data => {
-                        if(data.status == "false"){
+                        if (data.status == "false") {
                             reject(data.message);
-                        }else{
+                        } else {
                             for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                                 if (this._data.offloadedFiles[i].path == file) {
                                     this._data.offloadedFiles.splice(i, 1);
@@ -112,17 +145,17 @@ class fileContentManager {
                     });
                 });
             },
-            this.createFile = function (path,name,type){
+            this.createFile = function (path, name, type) {
                 //create new file at remote
-            
+
                 return new Promise((resolve, reject) => {
-                    if(typeof path == "undefined" || typeof name == "undefined" || typeof type == "undefined"){
+                    if (typeof path == "undefined" || typeof name == "undefined" || typeof type == "undefined") {
                         reject("Invalid parameters");
                     }
-                    if(type != "file" && type != "folder"){
+                    if (type != "file" && type != "folder") {
                         reject("Invalid type");
                     }
-                    fetch('/backend/createFile.php?PID='+this._data.projectID+'&path='+path+'&name='+name+'&type='+type, {
+                    fetch('/backend/createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -135,10 +168,10 @@ class fileContentManager {
                             reject();
                         }
                     }).then(data => {
-                        if(data.status == "false"){
+                        if (data.status == "false") {
                             reject(data.message);
-                        }else{
-                            this._data.offloadedFiles.push({path: path+name, content: "", syncedWithRemote: true});
+                        } else {
+                            this._data.offloadedFiles.push({ path: path + name, content: "", syncedWithRemote: true });
                             resolve();
                         }
                     }).catch(error => {
@@ -146,60 +179,60 @@ class fileContentManager {
                     });
                 });
             }
-            this.saveFile = function (file,content) {
-                // Save the file temporarily
-                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
-                    if (this._data.offloadedFiles[i].path == file) {
-                        this._data.offloadedFiles[i].content = content;
-                        this._data.offloadedFiles[i].syncedWithRemote = false;
-                        return;
-                    }
+        this.saveFile = function (file, content) {
+            // Save the file temporarily
+            for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                if (this._data.offloadedFiles[i].path == file) {
+                    this._data.offloadedFiles[i].content = content;
+                    this._data.offloadedFiles[i].syncedWithRemote = false;
+                    return;
                 }
-            },
+            }
+        },
             this.pushFileToRemote = function (file) {
                 // Push the file to the remote
                 return new Promise((resolve, reject) => {
-                for (var i = 0; i < this._data.offloadedFiles.length; i++) {
-                    if (this._data.offloadedFiles[i].path == file) {
-                        const increment = i;
-                        fetch('/backend/saveFile.php?PID='+this._data.projectID+'&PATH='+file, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: this._data.offloadedFiles[i].content
-                        }).then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Failed to save file');
-                                reject();
-                            }
-                        }).then(data => {
-                            if(data.status == "false"){
-                                reject(data.message);
-                            }else{
-                                this._data.offloadedFiles[increment].syncedWithRemote = true;
-                                resolve();
-                            }
-                        }).catch(error => {
-                            console.error('Error:', error);
-                        });
+                    for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                        if (this._data.offloadedFiles[i].path == file) {
+                            const increment = i;
+                            fetch('/backend/saveFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: this._data.offloadedFiles[i].content
+                            }).then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('Failed to save file');
+                                    reject();
+                                }
+                            }).then(data => {
+                                if (data.status == "false") {
+                                    reject(data.message);
+                                } else {
+                                    this._data.offloadedFiles[increment].syncedWithRemote = true;
+                                    resolve();
+                                }
+                            }).catch(error => {
+                                console.error('Error:', error);
+                            });
+                        }
                     }
-                }
-            });
+                });
             },
             this.folderRename = function (folderPath, newName) {
                 // Rename all offloaded files that are in the folder
-                for(var x = 0; x < this._data.offloadedFiles.length; x++){
-                    if(this._data.offloadedFiles[x].path.startsWith(folderPath)){
+                for (var x = 0; x < this._data.offloadedFiles.length; x++) {
+                    if (this._data.offloadedFiles[x].path.startsWith(folderPath)) {
                         this._data.offloadedFiles[x].path = newName + this._data.offloadedFiles[x].path.substring(folderPath.length);
                     }
                 }
             }
-            this._data = {
-                projectID: null,
-                offloadedFiles: [],
-            }
+        this._data = {
+            projectID: null,
+            offloadedFiles: [],
+        }
     }
 }
