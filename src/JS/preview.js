@@ -10,7 +10,8 @@ class PreviewHandler {
         },
         this.reload = function () {
             this._data.el.src = `/projects/${this._data.PID}/index.html`
-            this._attachTerminal()
+            this._attachTerminal();
+            this._data.terminalEl.innerHTML = '';
         },
         this._attachTerminal = function () {
             this._data.el.onload = function () {
