@@ -9,6 +9,14 @@
     --linedown-color: #585858;
     --selectedItem: #03395e;
     --selectedItemBorder: #036cbc;
+
+    --terminal-error: #4b2f36;
+    --terminal-error-border: #743e4c;
+    --terminal-error-icon: #ff3b6b;
+
+    --terminal-warning: #42381f;
+    --terminal-warning-border: #56562e;
+    --terminal-warning-icon: #d7b600;
 }
 
 .swal2-popup.swal2-toast {
@@ -41,21 +49,117 @@ body {
     height: 1pc;
     cursor: pointer;
 }
-#newFile{
+
+#newFile {
     margin-left: auto;
     margin-right: 10px;
 }
-#newFolder{
+
+#newFolder {
     margin-left: 0px;
     margin-right: 20px;
 }
+
 .topSideMenu p {
     margin: 0px;
     margin-right: 20px;
 }
 
-#mainContent{
+#mainContent {
     width: 100%;
     height: calc(100% - 38px);
     padding-top: 25px;
+}
+
+#preview {
+    width: 622.5px;
+    height: 277.5px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-top: 20px;
+    border: 0px;
+}
+
+#terminal {
+    min-height: 100%;
+    padding-right: 20px;
+}
+
+.terminal {
+    height: calc(100% - 341.5px);
+}
+
+.terminalScroller {
+    height: calc(100% - 55px);
+    overflow-y: scroll;
+}
+
+.terminalLine {
+    display: flex;
+    border: 1px solid var(--linedown-color);
+    border-left: 2px solid var(--linedown-color);
+    border-right: 2px solid var(--linedown-color);
+    padding-left: 25px;
+}
+.terminalLine.error{
+    background-color: var(--terminal-error);
+    border: 1px solid var(--terminal-error-border);
+    border-left: 2px solid var(--terminal-error-border);
+    border-right: 2px solid var(--terminal-error-border);
+    padding-left: 3px;
+}
+.terminalLine.error svg{
+    height: 1pc;
+    margin-top: 3px;
+    margin-right: 5px;
+    fill: var(--terminal-error-icon);
+}
+
+.terminalLine.warning{
+    background-color: var(--terminal-warning);
+    border: 1px solid var(--terminal-warning-border);
+    border-left: 2px solid var(--terminal-warning-border);
+    border-right: 2px solid var(--terminal-warning-border);
+    padding-left: 3px;
+}
+.terminalLine.warning svg{
+    height: 1pc;
+    margin-top: 3px;
+    margin-right: 5px;
+    fill: var(--terminal-warning-icon);
+}
+.terminalLine.info{
+    padding-left: 3px;
+}
+.terminalLine.info svg{
+    height: 1pc;
+    margin-top: 3px;
+    margin-right: 5px;
+}
+#terminal .terminalLine:first-child{
+    border-top: 2px solid var(--linedown-color);
+}
+#terminal .terminalLine:last-child{
+    border-bottom: 2px solid var(--linedown-color);
+}
+
+.terminalLine p:first-child {
+    max-width: 450px;overflow-wrap: break-word;
+}
+.terminalLine p {
+    margin: 2px;
+}
+
+.terminalLine p:last-child {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.terminalHead {
+    font-size: 17px;
+}
+
+.mainEditableContent {
+    display: flex;
+    height: 100%;
 }

@@ -13,6 +13,7 @@
     <script src="JS/TopBar.js"></script>
     <script src="JS/sidebar.js"></script>
     <script src="JS/editor.js"></script>
+    <script src="JS/preview.js"></script>
     <script src="JS/fileContentManager.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
@@ -48,24 +49,37 @@
         <div class="main2">
             <div class="topMenu" id="topMenu">
             </div>
-            <div id="mainContent">
-                <div style="padding: 20px;margin-left: auto;width: fit-content;margin-right: auto;">
-                    <svg width="50mm" fill="#181818" height="50mm" version="1.1" viewBox="0 0 50 50"
-                        xmlns="http://www.w3.org/2000/svg" style="margin-left: calc(50% - 94px);">
-                        <path
-                            d="m27.466 0-2.1427 3.5066c1.2139 1.6152 2.0149 3.5788 1.929 5.6052-0.17929 4.2177-3.7747 7.213-7.281 8.4772-0.54259 0.12641-1.0747 0.2801-1.5952 0.45889-0.0021 5.05e-4 -0.0063 0.0015-0.0084 0.0015v7.53e-4c-6.4282 2.2118-11.054 8.3014-11.076 15.479-0.027388 9.0667 7.2987 16.44 16.365 16.471 4.1479 0.01476 8.4053-1.2916 11.453-4.1057l-5.2116-5.0697c-1.6 1.3481-2.6986 1.9815-6.1857 1.9708-3.4871-0.01054-8.5848-4.3342-8.5701-9.2162 0.01475-4.8725 4.0504-8.6352 8.5701-8.841 3.6787-0.30669 7.9914-4.0082 10.102-9.3119 0.90378 1.851 1.3703 3.8871 1.3629 5.9493v1.28e-4c-0.01264 2.8737-0.94352 5.6671-2.6559 7.967l6.8791 3.2929c2.1414-3.3514 3.2892-7.2474 3.3091-11.232v-1.5e-4c0.025913-7.1454-3.5674-13.812-9.5334-17.687z"
-                            stroke-linecap="square" stroke-width="5.0526"></path>
-                    </svg>
-                    <p style="font-size: 26px;text-align: center;">Welcome To Flame</p>
-                    <p>Create a <span><svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
-                                style="width: 13px;position: relative;top: 2px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
-                            </svg></span> new file to start</p>
-                    <p>Please consider contributing at <a href="https://github.com/CodeTorchNET/Flame-Code-Editor/"
-                            target="_blank"
-                            style="color: var(--selectedItemBorder);">https://github.com/CodeTorchNET/Flame-Code-Editor/</a>
-                        or just leaving a star</p>
+            <div class="mainEditableContent">
+                <div id="mainContent">
+                    <div style="padding: 20px;margin-left: auto;width: fit-content;margin-right: auto;">
+                        <svg width="50mm" fill="#181818" height="50mm" version="1.1" viewBox="0 0 50 50"
+                            xmlns="http://www.w3.org/2000/svg" style="margin-left: calc(50% - 94px);">
+                            <path
+                                d="m27.466 0-2.1427 3.5066c1.2139 1.6152 2.0149 3.5788 1.929 5.6052-0.17929 4.2177-3.7747 7.213-7.281 8.4772-0.54259 0.12641-1.0747 0.2801-1.5952 0.45889-0.0021 5.05e-4 -0.0063 0.0015-0.0084 0.0015v7.53e-4c-6.4282 2.2118-11.054 8.3014-11.076 15.479-0.027388 9.0667 7.2987 16.44 16.365 16.471 4.1479 0.01476 8.4053-1.2916 11.453-4.1057l-5.2116-5.0697c-1.6 1.3481-2.6986 1.9815-6.1857 1.9708-3.4871-0.01054-8.5848-4.3342-8.5701-9.2162 0.01475-4.8725 4.0504-8.6352 8.5701-8.841 3.6787-0.30669 7.9914-4.0082 10.102-9.3119 0.90378 1.851 1.3703 3.8871 1.3629 5.9493v1.28e-4c-0.01264 2.8737-0.94352 5.6671-2.6559 7.967l6.8791 3.2929c2.1414-3.3514 3.2892-7.2474 3.3091-11.232v-1.5e-4c0.025913-7.1454-3.5674-13.812-9.5334-17.687z"
+                                stroke-linecap="square" stroke-width="5.0526"></path>
+                        </svg>
+                        <p style="font-size: 26px;text-align: center;">Welcome To Flame</p>
+                        <p>Create a <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
+                                    style="width: 13px;position: relative;top: 2px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15">
+                                    </path>
+                                </svg></span> new file to start</p>
+                        <p>Please consider contributing at <a href="https://github.com/CodeTorchNET/Flame-Code-Editor/"
+                                target="_blank"
+                                style="color: var(--selectedItemBorder);">https://github.com/CodeTorchNET/Flame-Code-Editor/</a>
+                            or just leaving a star</p>
+                    </div>
+                </div>
+                <div><iframe id="preview"></iframe>
+
+                    <div class="terminal">
+                        <p class="terminalHead">Terminal:</p>
+                        <div class="terminalScroller">
+                            <div id="terminal">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

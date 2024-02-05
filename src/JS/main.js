@@ -4,7 +4,9 @@ var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
 var FCM = new fileContentManager();
+var PH = new PreviewHandler();
 FCM.init('1');
+PH.init(document.getElementById("preview"),document.getElementById('terminal'), '1');
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {
@@ -27,6 +29,7 @@ document.addEventListener('keydown', function (event) {
         if (_data.currentOpenedFile != null) {
             FCM.pushFileToRemote(_data.currentOpenedFile).then(function () {
                 topMenuHandler.changeState(topMenuHandler._data.activeElement, false);
+                PH.reload();
                 Toast.fire({
                     icon: "success",
                     title: "File saved"
@@ -280,7 +283,6 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
     if (Path[Path.length - 1] != '/') {
         Path += '/';
     }
-    console.log(Path);
     FCM.createFile(Path, e.detail.name, e.detail.type).then(function () {
         if (e.detail.type == 'file') {
             const topMenuId = topMenuHandler.add(e.detail.name, e.detail.type, false);
