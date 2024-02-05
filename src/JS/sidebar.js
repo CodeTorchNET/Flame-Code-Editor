@@ -158,6 +158,7 @@ class Sidebar {
                 this._rightClick(div, 'file');
                 //add click action
                 div.addEventListener('click', function () {
+                    var name = div.children[1].innerHTML;
                     if (this._data.activeFile != null) {
                         this._data.activeFile.className = "item file";
                     }
