@@ -330,6 +330,7 @@ var dragging = false;
 
 $('#sideMenuResize').mousedown(function (e) {
     e.preventDefault();
+    document.getElementById('preview').style.pointerEvents = 'none';
 
     dragging = true;
     var sidebar = $('.sideMenu');
@@ -349,10 +350,16 @@ $('#sideMenuResize').mousedown(function (e) {
 
 $(document).mouseup(function (e) {
     if (dragging) {
-        $('.sideMenu').css("width", e.pageX - 40);
+        $('.sideMenu').css("width", e.pageX - 34);
+        $('#mainContent').css('width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width')) + 3)));
+
+        $('.MainRightThirdParent').css("min-width", (window.innerWidth - (e.pageX + (parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width'))))))));
+        $('.MainRightThirdParent').css("max-width", (window.innerWidth - (e.pageX + (parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width'))))))));
+
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         dragging = false;
+        document.getElementById('preview').style.pointerEvents = '';
     }
 });
 
@@ -361,7 +368,7 @@ var draggingRight = false;
 
 $('#RightSideResize').mousedown(function (e) {
     e.preventDefault();
-
+    document.getElementById('preview').style.pointerEvents = 'none';
     draggingRight = true;
     var sidebar = $('.MainRightThirdParent');
     var ghostbar = $('<div>', {
@@ -382,9 +389,11 @@ $(document).mouseup(function (e) {
     if (draggingRight) {
         $('.MainRightThirdParent').css("min-width", (window.innerWidth - e.pageX));
         $('.MainRightThirdParent').css("max-width", (window.innerWidth - e.pageX));
+        $('#mainContent').css('width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - ((window.innerWidth - e.pageX) + (parseInt(window.getComputedStyle(document.getElementsByClassName('sideMenu')[0]).getPropertyValue('width')) + 40)));
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         draggingRight = false;
+        document.getElementById('preview').style.pointerEvents = '';
     }
 });
 

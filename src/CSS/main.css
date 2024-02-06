@@ -69,6 +69,7 @@ body {
     width: 100%;
     height: calc(100% - 38px);
     padding-top: 25px;
+    transition: width 0.3s ease;
 }
 
 #preview {
@@ -184,7 +185,10 @@ body {
 }
 
 .MainRightThirdParent{
+    padding-top: 20px;
     display: flex;
+    background-color: var(--main-background);
+    transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease;
 }
 #RightSideResize{
     height: 100%;
