@@ -163,3 +163,12 @@ body {
     display: flex;
     height: 100%;
 }
+
+.monaco-editor .scrollbar.vertical{
+    background-color: var(--main-background);
+    opacity: 1 !important;
+}
+.monaco-editor .scrollbar.vertical.invisible .slider{
+    opacity: 0 !important;
+    transition: opacity .8s linear;
+}
