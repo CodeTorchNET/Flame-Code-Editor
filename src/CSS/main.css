@@ -72,14 +72,21 @@ body {
 }
 
 #preview {
-    width: 622.5px;
-    height: 277.5px;
+   /*width: 622.5px;*/
+    width: 100%;
+    /*height: 277.5px;*/
+    height: 100%;
     background-color: #fff;
     border-radius: 4px;
-    margin-top: 20px;
     border: 0px;
 }
-
+.MainRightThird{
+    width: 100%;
+}
+.previewParent{
+    width: 100%;
+    height: 277.5px;
+}
 #terminal {
     min-height: 100%;
     padding-right: 20px;
@@ -171,4 +178,29 @@ body {
 .monaco-editor .scrollbar.vertical.invisible .slider{
     opacity: 0 !important;
     transition: opacity .8s linear;
+}
+
+.MainRightThirdParent{
+    display: flex;
+}
+#RightSideResize{
+    height: 100%;
+    min-width: 5px;
+    background-color: var(--main-background-border);
+    z-index: 100;
+}
+#RightSideResize:hover{
+    cursor: ew-resize;
+    background-color: var(--selectedItemBorder);
+}
+
+#TopSideResize{
+    width: 100%;
+    min-height: 5px;
+    background-color: var(--main-background-border);
+    z-index: 100;
+}
+#TopSideResize:hover{
+    cursor: ns-resize;
+    background-color: var(--selectedItemBorder);
 }

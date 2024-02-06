@@ -24,6 +24,7 @@ class Editor {
                         value: value,
                         language: language,
                         theme: 'vs-dark',
+                        automaticLayout: true
                     });
                     this._data.editor.getModel().onDidChangeContent(function(event) {
                         // Handle the content change event
