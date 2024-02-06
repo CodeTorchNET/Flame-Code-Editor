@@ -414,6 +414,7 @@ $('#TopSideResize').mousedown(function (e) {
 $(document).mouseup(function (e) {
     if (draggingBottom) {
         $('.previewParent').css("height",  e.pageY - 40);
+        $('.terminal').css("height", 'calc(100% - ' + (e.pageY + 4) + 'px)');
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         draggingBottom = false;

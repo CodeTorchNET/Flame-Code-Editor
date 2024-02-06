@@ -89,16 +89,19 @@ body {
 }
 #terminal {
     min-height: 100%;
-    padding-right: 20px;
+    padding-bottom: 20px;
 }
 
 .terminal {
-    height: calc(100% - 341.5px);
+    height: calc(100% - 321.5px);
 }
 
 .terminalScroller {
     height: calc(100% - 55px);
     overflow-y: scroll;
+    padding: 20px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .terminalLine {
