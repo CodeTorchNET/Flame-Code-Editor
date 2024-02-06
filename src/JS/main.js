@@ -107,6 +107,7 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
     //HANDLE AS THIS COULD BE A FOLDER WHICH MESSES UP THE PATH/HEIRARCHY
     var path = e.detail.oldPath.substring(0, e.detail.oldPath.length - e.detail.oldName.length);
     FCM.renameFile(path, e.detail.oldName, e.detail.newName, 'folder').then(function () {
+        _data.currentCreatePath = '/';
         Toast.fire({
             icon: "success",
             title: "File renamed"
@@ -202,6 +203,7 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 });
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
     FCM.deleteFile(e.detail.path).then(function () {
+        _data.currentCreatePath = '/';
         var Id = null;
         var index = null;
         _data.filesOpened.forEach(function (element, i) {
@@ -229,7 +231,7 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
-    FCM.deleteFile(e.detail.path).then(function () {
+    FCM.deleteFile(e.detail.path,'folder').then(function () {
         //check every file and remove the ones that are in the folder
         var toRemove = [];
         _data.filesOpened.forEach(function (element, i) {
