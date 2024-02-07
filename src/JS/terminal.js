@@ -38,3 +38,10 @@ console.trace = function () {
     var file = caller.split('/').pop()
     window.parent.postMessage(['console.trace',file, ...arguments], '*')
 }
+
+window.onerror = function (message, source, lineno, colno, error) {
+    var stack = new Error().stack
+    var caller = stack.split('\n')[1]
+    var file = caller.split('/').pop()
+    window.parent.postMessage(['console.error',file, message], '*')
+}
