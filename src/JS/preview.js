@@ -19,11 +19,29 @@ class PreviewHandler {
                 }
                 lastScrollTop = st <= 0 ? 0 : st;
             }.bind(this));
+            document.getElementById('persistlogs').addEventListener('click', function () {
+                if(document.getElementById('persistlogs').classList.contains('active')){
+                    document.getElementById('persistlogs').classList.remove('active');
+                    this._data.persistLogs = false;
+                }else{
+                    document.getElementById('persistlogs').classList.add('active');
+                    this._data.persistLogs = true;
+                }
+            }.bind(this));
+            document.getElementById('clearTerminal').addEventListener('click', function () {
+                this._data.terminalEl.innerHTML = '';
+                this._data.errorNum = 0;
+                this._data.warningNum = 0;
+                document.getElementById('errorNumber').innerHTML = 0;
+                document.getElementById('warningNumber').innerHTML = 0;
+            }.bind(this));
         },
             this.reload = function () {
                 this._data.el.src = `/projects/${this._data.PID}/index.html`
                 this._attachTerminal();
-                this._data.terminalEl.innerHTML = '';
+                if(!this._data.persistLogs){
+                    this._data.terminalEl.innerHTML = '';
+                }
             },
             this._attachTerminal = function () {
                 this._data.el.onload = function () {
@@ -59,7 +77,9 @@ class PreviewHandler {
                         HTML.className = 'terminalLine error';
                         HTML.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg><p>' + FinalData + '</p><p>' + data[0] + '</p>';
                         this._data.terminalEl.appendChild(HTML);
-                        this._handleScrolling()
+                        this._handleScrolling();
+                        this._data.errorNum++;
+                        document.getElementById('errorNumber').innerHTML = this._data.errorNum;
                     } else if (e.data[0] === 'console.warn') {
                         var data = e.data.slice(1);
                         var FinalData = this._terminalContent(data);
@@ -68,6 +88,8 @@ class PreviewHandler {
                         HTML.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg><p>' + FinalData + '</p><p>' + data[0] + '</p>'
                         this._data.terminalEl.appendChild(HTML);
                         this._handleScrolling()
+                        this._data.warningNum++;
+                        document.getElementById('warningNumber').innerHTML = this._data.warningNum;
                     } else if (e.data[0] === 'console.info') {
                         var data = e.data.slice(1);
                         var FinalData = this._terminalContent(data);
@@ -112,7 +134,10 @@ class PreviewHandler {
             PID: null,
             el: null,
             terminalEl: null,
-            autoScroll: true
+            autoScroll: true,
+            errorNum: 0,
+            warningNum: 0,
+            persistLogs: false
         }
     }
 }
