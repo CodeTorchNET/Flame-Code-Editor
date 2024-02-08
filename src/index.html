@@ -39,15 +39,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                     </svg>
+                    <label id="uploadFileIcon" for="fileInput" style="cursor: pointer;">    
                     <svg id="uploadFile" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                      </svg>                      
+                      </svg>   
+                    </label>                   
                     <label for="folderInput" style="cursor: pointer;" id="uploadFolderIcon">
                         <svg style="width: 16px;height:16px" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="m13.06 6.31-2.12-2.12c-0.28128-0.28163-0.66296-0.43992-1.061-0.44h-5.379c-1.2426 0-2.25 1.0074-2.25 2.25v12c0 1.2426 1.0074 2.25 2.25 2.25h15c1.2426 0 2.25-1.0074 2.25-2.25v-9c0-1.2426-1.0074-2.25-2.25-2.25h-5.379c-0.39769-3.501e-4 -0.77896-0.15862-1.06-0.44zm-1.06 10.387v-6.75m0 0 3 3m-3-3-3 3" stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>        
                     </label>
-                    <input type="file" id="folderInput" webkitdirectory="" directory="" multiple="" style="display: none;" onchange="uploadFolder()">
+                    <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="uploadFolder()">
+                    <input type="file" id="fileInput" style="display: none;" onchange="uploadFolder(true)" multiple>
                 </div>
                 <div class="sideMenuWrapper">
                     <div id="sideMenu"></div>

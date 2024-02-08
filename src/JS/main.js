@@ -434,12 +434,16 @@ $(document).mouseup(function (e) {
 
 
 
-function uploadFolder() {
+function uploadFolder(overrideFolderCreation = false) {
     function internal() {
         return new Promise((resolve, reject) => {
-
-            const folderInput = document.getElementById('folderInput');
-            const files = folderInput.files;
+            var UploadinputEl = '';
+            if(overrideFolderCreation){
+                UploadinputEl = document.getElementById('fileInput');
+            }else{
+                UploadinputEl = document.getElementById('folderInput');
+            }
+            const files = UploadinputEl.files;
             var newFoldersToCreate = []; // Declare outside of the loop
             var filesEnd = [];
             if (files.length === 0) {
@@ -449,8 +453,7 @@ function uploadFolder() {
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const fileName = file.webkitRelativePath;
-
+                const fileName = file.webkitRelativePath || file.name;
                 // Check if the file name starts with a dot
                 if (fileName.split('/').pop().startsWith('.')) {
                     console.log('Skipping hidden file:', fileName);
@@ -490,9 +493,13 @@ function uploadFolder() {
                     path = path.join('/');
                     path = path + '/';
                 }
-                FCM.createFile(_data.currentCreatePath + path,fileName, 'file',element.content)
+                var finalPath = _data.currentCreatePath + path;
+                if(overrideFolderCreation){
+                    finalPath = _data.currentCreatePath;
+                }
+                FCM.createFile(finalPath,fileName, 'file',element.content)
                     .then(function () {
-                        sidebarHandler.add(_data.currentCreatePath + path,fileName, 'file');
+                        sidebarHandler.add(finalPath,fileName, 'file');
                         Toast.fire({
                             icon: "success",
                             title: "Uploaded " + (index + 1) + " of " + (array.length) + ' files',
@@ -540,6 +547,10 @@ function uploadFolder() {
                     console.log('Error creating folder:', path, error);
                 })
         }
+        if(overrideFolderCreation){
+            intneralFileUploader();
+        }else{
         internalFolderCreator(newFoldersToCreate[0], 0, newFoldersToCreate);
+        }
     });
 }
