@@ -105,6 +105,17 @@ class PreviewHandler {
                         HTML.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg><p>Console.trace is currently not supported</p><p>NA:NA</p>';
                         this._data.terminalEl.appendChild(HTML);
                         this._handleScrolling()
+                    } else if (e.data[0] === 'console.clear') {
+                        this._data.terminalEl.innerHTML = '';
+                        this._data.errorNum = 0;
+                        this._data.warningNum = 0;
+                        document.getElementById('errorNumber').innerHTML = 0;
+                        document.getElementById('warningNumber').innerHTML = 0;
+                        var HTML = document.createElement('div');
+                        HTML.className = 'terminalLine info';
+                        HTML.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg><p>Console was cleared via console.clear()</p><p></p>';
+                        this._data.terminalEl.appendChild(HTML);
+                        this._handleScrolling();
                     }
                 }.bind(this))
             },

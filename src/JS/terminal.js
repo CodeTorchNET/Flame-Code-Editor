@@ -39,6 +39,10 @@ console.trace = function () {
     window.parent.postMessage(['console.trace',file, ...arguments], '*')
 }
 
+console.clear = function () {
+    window.parent.postMessage(['console.clear'], '*')
+}
+
 window.onerror = function (message, source, lineno, colno, error) {
     var stack = new Error().stack
     var caller = stack.split('\n')[1]
