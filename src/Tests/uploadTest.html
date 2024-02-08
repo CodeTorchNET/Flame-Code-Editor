@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder Upload</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <style>
+        * {
+            font-family: 'Roboto';
+        }
+    </style>
+</head>
+
+<body>
+  <!-- SVG icon for file input -->
+  <label for="folderInput" style="cursor: pointer;">
+    <svg style="width: 16px;height:16px" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="m13.06 6.31-2.12-2.12c-0.28128-0.28163-0.66296-0.43992-1.061-0.44h-5.379c-1.2426 0-2.25 1.0074-2.25 2.25v12c0 1.2426 1.0074 2.25 2.25 2.25h15c1.2426 0 2.25-1.0074 2.25-2.25v-9c0-1.2426-1.0074-2.25-2.25-2.25h-5.379c-0.39769-3.501e-4 -0.77896-0.15862-1.06-0.44zm-1.06 10.387v-6.75m0 0 3 3m-3-3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>        
+  </label>
+  
+  <!-- Actual file input field, hidden from view -->
+  <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="uploadFolder()">
+  
+    <script>
+        function uploadFolder() {
+            function internal() {
+                return new Promise((resolve, reject) => {
+
+                    const folderInput = document.getElementById('folderInput');
+                    const files = folderInput.files;
+                    var newFoldersToCreate = []; // Declare outside of the loop
+                    var filesEnd = [];
+                    if (files.length === 0) {
+                        console.log('No files selected.');
+                        return;
+                    }
+
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const fileName = file.webkitRelativePath;
+
+                        // Check if the file name starts with a dot
+                        if (fileName.split('/').pop().startsWith('.')) {
+                            console.log('Skipping hidden file:', fileName);
+                            continue;
+                        }
+
+                        const reader = new FileReader();
+
+                        reader.onload = function (event) {
+                            const content = event.target.result;
+                            console.log('File:', fileName);
+                            console.log('Content:', content);
+                            filesEnd.push({fileName, content});
+                            if (!newFoldersToCreate.includes(fileName.split('/').slice(0, -1).join('/'))) {
+                                newFoldersToCreate.push(fileName.split('/').slice(0, -1).join('/'));
+                            }
+                            if (i === files.length - 1) {
+                                resolve({newFoldersToCreate, filesEnd});
+                            }
+                        };
+
+                        reader.readAsText(file);
+                    }
+                });
+            }
+            internal().then((e) => {
+                newFoldersToCreate = e.newFoldersToCreate;
+                filesEnd = e.filesEnd;
+                for (let i = 0; i < newFoldersToCreate.length; i++) {
+                    let element = newFoldersToCreate[i];
+
+                    //ADD currentCreatePath to beginning of the element
+
+                    //check if it ends with a /
+                    if (!element.endsWith('/')) {
+                        element = element + '/';
+                    }
+                    newFoldersToCreate[i] = element;
+                }
+
+                console.log('New folders to create:', newFoldersToCreate, 'Files:', filesEnd);
+            });
+        }
+
+    </script>
+</body>
+
+</html>

@@ -57,7 +57,17 @@ body {
 
 #newFolder {
     margin-left: 0px;
-    margin-right: 20px;
+    margin-right: 10px;
+}
+
+#uploadFile{
+    margin-right: 10px;
+    cursor: pointer;
+    margin-top: 1px;
+    height: 14px;
+}
+#uploadFolderIcon{
+    /*margin-right: 20px;*/
 }
 
 .topSideMenu p {

@@ -6,7 +6,7 @@ var sidebarHandler = new Sidebar();
 var FCM = new fileContentManager();
 var PH = new PreviewHandler();
 FCM.init('1');
-PH.init(document.getElementById("preview"),document.getElementById('terminal'), '1');
+PH.init(document.getElementById("preview"), document.getElementById('terminal'), '1');
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {
@@ -231,7 +231,8 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
-    FCM.deleteFile(e.detail.path,'folder').then(function () {
+    FCM.deleteFile(e.detail.path, 'folder').then(function () {
+        _data.currentCreatePath = '/';
         //check every file and remove the ones that are in the folder
         var toRemove = [];
         _data.filesOpened.forEach(function (element, i) {
@@ -422,7 +423,7 @@ $('#TopSideResize').mousedown(function (e) {
 
 $(document).mouseup(function (e) {
     if (draggingBottom) {
-        $('.previewParent').css("height",  e.pageY - 40);
+        $('.previewParent').css("height", e.pageY - 40);
         $('.terminal').css("height", 'calc(100% - ' + (e.pageY + 47) + 'px)');
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
@@ -430,3 +431,115 @@ $(document).mouseup(function (e) {
         document.getElementById('preview').style.pointerEvents = '';
     }
 });
+
+
+
+function uploadFolder() {
+    function internal() {
+        return new Promise((resolve, reject) => {
+
+            const folderInput = document.getElementById('folderInput');
+            const files = folderInput.files;
+            var newFoldersToCreate = []; // Declare outside of the loop
+            var filesEnd = [];
+            if (files.length === 0) {
+                console.log('No files selected.');
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileName = file.webkitRelativePath;
+
+                // Check if the file name starts with a dot
+                if (fileName.split('/').pop().startsWith('.')) {
+                    console.log('Skipping hidden file:', fileName);
+                    continue;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const content = event.target.result;
+                    filesEnd.push({ fileName, content });
+                    if (!newFoldersToCreate.includes(fileName.split('/').slice(0, -1).join('/'))) {
+                        newFoldersToCreate.push(fileName.split('/').slice(0, -1).join('/'));
+                    }
+                    if (i === files.length - 1) {
+                        resolve({ newFoldersToCreate, filesEnd });
+                    }
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    internal().then((e) => {
+        newFoldersToCreate = e.newFoldersToCreate;
+        filesEnd = e.filesEnd;
+        //create the folders
+        function intneralFileUploader() {
+            function internalFileUploader(element, index, array) {
+                path = '';
+                fileName = '';
+                if (!element.fileName.includes('/')) {
+                    fileName = element.fileName;
+                } else {
+                    path = element.fileName.split('/');
+                    fileName = path.pop();
+                    path = path.join('/');
+                    path = path + '/';
+                }
+                FCM.createFile(_data.currentCreatePath + path,fileName, 'file',element.content)
+                    .then(function () {
+                        sidebarHandler.add(_data.currentCreatePath + path,fileName, 'file');
+                        Toast.fire({
+                            icon: "success",
+                            title: "Uploaded " + (index + 1) + " of " + (array.length) + ' files',
+                        });
+                        if(index === array.length - 1){
+                            //done creating files
+                            return;
+                        }else{
+                            internalFileUploader(array[index + 1], index + 1, array);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log('Error creating file:', element.fileName, error);
+                    })
+            }
+            internalFileUploader(filesEnd[0], 0, filesEnd);
+        }
+        function internalFolderCreator(element, index, array) {
+            //CHECK IF BASE FOLDER ALREADY EXISTS
+            path = '';
+            fileName = '';
+            if (!element.includes('/')) {
+                fileName = element;
+            } else {
+                path = element.split('/');
+                fileName = path.pop();
+                path = path.join('/');
+                path = path + '/';
+            }
+            FCM.createFile(_data.currentCreatePath + path, fileName, 'folder')
+                .then(function () {
+                    sidebarHandler.add(_data.currentCreatePath + path, fileName, 'folder');
+                    Toast.fire({
+                        icon: "success",
+                        title: "Completed " + (index + 1) + " of " + array.length + ' preperations',
+                    });
+                    if(index === array.length - 1){
+                        //done creating folders
+                        intneralFileUploader();
+                    }else{
+                        internalFolderCreator(array[index + 1], index + 1, array);
+                    }
+                })
+                .catch(function (error) {
+                    console.log('Error creating folder:', path, error);
+                })
+        }
+        internalFolderCreator(newFoldersToCreate[0], 0, newFoldersToCreate);
+    });
+}

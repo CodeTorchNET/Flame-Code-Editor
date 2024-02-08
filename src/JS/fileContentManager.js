@@ -148,7 +148,7 @@ class fileContentManager {
                     });
                 });
             },
-            this.createFile = function (path, name, type) {
+            this.createFile = function (path, name, type,content = "") {
                 //create new file at remote
 
                 return new Promise((resolve, reject) => {
@@ -159,10 +159,11 @@ class fileContentManager {
                         reject("Invalid type");
                     }
                     fetch('/backend/createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
-                        }
+                            'Content-Type': 'text/plain'
+                        },
+                        body: content
                     }).then(response => {
                         if (response.ok) {
                             return response.json();
@@ -174,7 +175,11 @@ class fileContentManager {
                         if (data.status == "false") {
                             reject(data.message);
                         } else {
-                            this._data.offloadedFiles.push({ path: path + name, content: "", syncedWithRemote: true });
+                            if(content != "" && type == "file"){
+                                //base64 decode the content
+                                content = atob(content.split(',')[1]);
+                            }
+                            this._data.offloadedFiles.push({ path: path + name, content: content, syncedWithRemote: true });
                             resolve();
                         }
                     }).catch(error => {

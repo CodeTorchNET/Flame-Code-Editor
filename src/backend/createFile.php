@@ -3,6 +3,34 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 
+
+$type = $_GET['type'];
+if($type != 'file' && $type != 'folder'){
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid type'));
+    exit();
+}
+
+$Data = file_get_contents('php://input');
+if($type == 'file'){
+if(!isset($Data)){
+    $Data = '';
+}
+//split data by ',' as it is base64 encoded
+$Data = explode(',', $Data);
+$Data = $Data[1];
+//decode the base64 data
+$Data = base64_decode($Data);
+if($Data == false){
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid data'));
+    exit();
+}
+
+//make sure Data is less than 20MB
+if(strlen($Data) > 20000000){
+    echo json_encode(array('status' => 'false', 'message' => 'File size is too large'));
+    exit();
+}
+}
 $PROJECTID = $_GET['PID'];
 if (!isset($PROJECTID)) {
     echo json_encode(array('status' => 'false', 'message' => 'No project ID provided'));
@@ -12,11 +40,6 @@ if (!isset($PROJECTID)) {
 $PATH = $_GET['path'];
 if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
-    exit();
-}
-$type = $_GET['type'];
-if($type != 'file' && $type != 'folder'){
-    echo json_encode(array('status' => 'false', 'message' => 'Invalid type'));
     exit();
 }
 $fileName = $_GET['name'];
@@ -30,7 +53,7 @@ if($type == 'file'){
         echo json_encode(array('status' => 'false', 'message' => 'File already exists'));
         exit();
     }
-    file_put_contents('../projects/' . $PROJECTID . $PATH . $fileName, '');
+    file_put_contents('../projects/' . $PROJECTID . $PATH . $fileName, $Data);
     echo json_encode(array('status' => 'true', 'message' => 'File saved'));
 }else{
     //check if the folder exists
