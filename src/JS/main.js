@@ -18,6 +18,18 @@ FCM.loadFileStructure().then(function (data) {
         title: "An error occured while trying to load the project: " + error
     });
 });
+
+
+function checkType(MIME){
+    MIME = MIME.split(';')[0];
+    MIME = MIME.split('/')[0];
+    if(MIME == 'image'){
+        return 'image';
+    }else if(MIME == 'text'){
+        return 'code';
+    }
+}
+
 var editorHandler = new Editor();
 editorHandler.init(document.getElementById("mainContent"));
 
@@ -135,7 +147,12 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
     _data.currentOpenedFile = e.detail.path;
     FCM.loadFile(e.detail.path).then(function (data) {
-        editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+        var type = checkType(data.MIME);
+        if(type == 'image'){
+            editorHandler.renderImageEditor(data.response, data.MIME);
+        }else if(type == 'code'){
+            editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+        }
         //open it in top bar
         //check if it is already opened
         var alreadyOpened = false;
@@ -178,7 +195,12 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
         }
     });
     FCM.loadFile(path).then(function (data) {
-        editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(path.split('.').pop()));
+        var type = checkType(data.MIME);
+        if(type == 'image'){
+            editorHandler.renderImageEditor(data.response, data.MIME);
+        }else if(type == 'code'){
+            editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(path.split('.').pop()));
+        }
         sidebarHandler.setActive(Id);
         _data.currentOpenedFile = path;
     }).catch(function (error) {
@@ -300,7 +322,12 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
             topMenuHandler.setActive(topMenuId, true);
             _data.currentOpenedFile = e.detail.path;
             FCM.loadFile(Path + e.detail.name).then(function (data) {
-                editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+                var type = checkType(e.detail.name.split('/').pop());
+                if(type == 'image'){
+                    editorHandler.renderImageEditor(data, findMimeType(e.detail.name.split('/').pop()));
+                }else if(type == 'code'){
+                    editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+                }
             }).catch(function (error) {
                 Toast.fire({
                     icon: "error",

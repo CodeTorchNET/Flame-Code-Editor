@@ -15,28 +15,41 @@ class Editor {
             }
         },
             this.renderFileEditor = function (value,language) {
-                this._cleanUp();
-                this._data.currentScreen = 'editor';
-                const target = this._data.target;
-                require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.45.0/min/vs' }});
-                require(['vs/editor/editor.main'], function () {
-                    this._data.editor = monaco.editor.create(target, {
-                        value: value,
-                        language: language,
-                        theme: 'vs-dark',
-                        automaticLayout: true
-                    });
-                    this._data.editor.getModel().onDidChangeContent(function(event) {
-                        // Handle the content change event
-                        document.dispatchEvent(new CustomEvent('fileEdited', {detail: {}}));
-                    });
-                }.bind(this));            
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    value = event.target.result;
+                    this._cleanUp();
+                    this._data.currentScreen = 'editor';
+                    const target = this._data.target;
+                    require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.45.0/min/vs' }});
+                    require(['vs/editor/editor.main'], function () {
+                        this._data.editor = monaco.editor.create(target, {
+                            value: value,
+                            language: language,
+                            theme: 'vs-dark',
+                            automaticLayout: true
+                        });
+                        this._data.editor.getModel().onDidChangeContent(function(event) {
+                            // Handle the content change event
+                            document.dispatchEvent(new CustomEvent('fileEdited', {detail: {}}));
+                        });
+                    }.bind(this));  
+                }.bind(this);
+                reader.readAsText(value);          
             },
             this.getFileContent = function () {
                 return this._data.editor.getValue();
             }
-            this.renderImageEditor = function () {
-            },
+            this.renderImageEditor = function (imageDataResponse) {
+                this._cleanUp();    
+                var url = URL.createObjectURL(imageDataResponse);
+                var imgElement = document.createElement('img');
+                imgElement.src = url;
+                imgElement.classList.add('imageViewer'); 
+                this._data.currentScreen = 'image';
+                this._data.target.innerHTML = '';
+                this._data.target.appendChild(imgElement);
+            };                   
             this.renderError = function () {
             },
             this.renderWelcome = function () {

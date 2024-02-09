@@ -14,5 +14,9 @@ if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
     exit();
 }
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+$mime = finfo_file($finfo, '../projects/' . $PROJECTID . $PATH);
+finfo_close($finfo);
+header('Content-Type: ' . $mime);
 echo file_get_contents('../projects/' . $PROJECTID . $PATH);
 ?>

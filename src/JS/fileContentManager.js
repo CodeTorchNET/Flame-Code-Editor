@@ -59,12 +59,14 @@ class fileContentManager {
                         }
                     }).then(response => {
                         if (response.ok) {
-                            return response.text();
+                            return response.blob().then(blob => {
+                                return { "response": blob, "MIME": response.headers.get('Content-Type') };
+                            });
                         } else {
                             throw new Error('Failed to load file');
                         }
                     }).then(data => {
-                        this._data.offloadedFiles.push({ path: file, content: data, syncedWithRemote: true })
+                        this._data.offloadedFiles.push({ path: file, content: data.response,MIME:data.MIME, syncedWithRemote: true })
                         resolve(data);
                     }).catch(error => {
                         console.error('Error:', error);
@@ -108,7 +110,7 @@ class fileContentManager {
                     });
                 });
             },
-            this.deleteFile = function (file,type = 'file') {//file/folder
+            this.deleteFile = function (file, type = 'file') {//file/folder
                 // Delete the file from the remote
                 return new Promise((resolve, reject) => {
                     if (typeof file == "undefined") {
@@ -148,7 +150,7 @@ class fileContentManager {
                     });
                 });
             },
-            this.createFile = function (path, name, type,content = "") {
+            this.createFile = function (path, name, type, content = "") {
                 //create new file at remote
 
                 return new Promise((resolve, reject) => {
@@ -175,7 +177,7 @@ class fileContentManager {
                         if (data.status == "false") {
                             reject(data.message);
                         } else {
-                            if(content != "" && type == "file"){
+                            if (content != "" && type == "file") {
                                 //base64 decode the content
                                 content = atob(content.split(',')[1]);
                             }
