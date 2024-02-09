@@ -41,6 +41,10 @@ class PreviewHandler {
                 this._attachTerminal();
                 if(!this._data.persistLogs){
                     this._data.terminalEl.innerHTML = '';
+                    this._data.errorNum = 0;
+                    this._data.warningNum = 0;
+                    document.getElementById('errorNumber').innerHTML = 0;
+                    document.getElementById('warningNumber').innerHTML = 0;
                 }
             },
             this._attachTerminal = function () {
