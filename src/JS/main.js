@@ -31,6 +31,8 @@ function checkType(MIME){
         return 'image';
     }else if(MIME == 'text'){
         return 'code';
+    }else if(MIME == 'application'){
+        return 'code';
     }
 }
 
@@ -229,6 +231,7 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 });
 document.getElementById('sideMenu').addEventListener('fileDeleted', function (e) {
     FCM.deleteFile(e.detail.path).then(function () {
+        PH.reload()
         _data.currentCreatePath = '/';
         var Id = null;
         var index = null;
@@ -258,6 +261,7 @@ document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
 //NEEDS
 document.getElementById('sideMenu').addEventListener('folderDeleted', function (e) {
     FCM.deleteFile(e.detail.path, 'folder').then(function () {
+        PH.reload();
         _data.currentCreatePath = '/';
         //check every file and remove the ones that are in the folder
         var toRemove = [];
@@ -314,6 +318,7 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
     }
     FCM.createFile(Path, e.detail.name, e.detail.type).then(function () {
         if (e.detail.type == 'file') {
+            PH.reload();
             const topMenuId = topMenuHandler.add(e.detail.name, e.detail.type, false);
             _data.filesOpened.push({
                 name: e.detail.name,
@@ -326,7 +331,7 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
             topMenuHandler.setActive(topMenuId, true);
             _data.currentOpenedFile = e.detail.path;
             FCM.loadFile(Path + e.detail.name).then(function (data) {
-                var type = checkType(e.detail.name.split('/').pop());
+                var type = checkType(data.MIME);
                 if(type == 'image'){
                     editorHandler.renderImageEditor(data.response, data.MIME);
                 }else if(type == 'code'){

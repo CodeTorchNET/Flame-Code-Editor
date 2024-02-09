@@ -55,7 +55,11 @@ if($type == 'file'){
         exit();
     }
     file_put_contents('../projects/' . $PROJECTID . $PATH . $fileName, $Data);
-    echo json_encode(array('status' => 'true', 'message' => 'File saved'));
+    //find mime type of file
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, '../projects/' . $PROJECTID . $PATH . $fileName);
+    finfo_close($finfo);
+    echo json_encode(array('status' => 'true', 'message' => 'File saved', 'mime' => $mime));
 }else{
     //check if the folder exists
     if (file_exists('../projects/' . $PROJECTID . $PATH . $fileName)) {

@@ -177,11 +177,20 @@ class fileContentManager {
                         if (data.status == "false") {
                             reject(data.message);
                         } else {
-                            if (content != "" && type == "file") {
-                                //base64 decode the content
-                                content = atob(content.split(',')[1]);
+                            if (content !== "" && type === "file") {
+                                content = content.split(',')[1];
+                                var decodedContent = atob(content);
+                                var byteArray = new Uint8Array(decodedContent.length);
+                                for (var i = 0; i < decodedContent.length; i++) {
+                                    byteArray[i] = decodedContent.charCodeAt(i);
+                                }
+                                content = new Blob([byteArray], { type: data.mime });
+                            } else {
+                                content = new Blob([content], { type: data.mime });
                             }
-                            this._data.offloadedFiles.push({ path: path + name, content: content, syncedWithRemote: true });
+                            if(type === "file"){
+                            this._data.offloadedFiles.push({ path: path + name, content: content, MIME: data.mime, syncedWithRemote: true });
+                            }
                             resolve();
                         }
                     }).catch(error => {
