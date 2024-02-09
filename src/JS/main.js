@@ -10,7 +10,11 @@ PH.init(document.getElementById("preview"), document.getElementById('terminal'),
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {
-        sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE);
+        if(data[i].TYPE == 'file'){
+            sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE,data[i].FILENAME.split('.').pop());
+        }else{
+            sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE);
+        }
     }
 }).catch(function (error) {
     Toast.fire({
@@ -324,9 +328,9 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
             FCM.loadFile(Path + e.detail.name).then(function (data) {
                 var type = checkType(e.detail.name.split('/').pop());
                 if(type == 'image'){
-                    editorHandler.renderImageEditor(data, findMimeType(e.detail.name.split('/').pop()));
+                    editorHandler.renderImageEditor(data.response, data.MIME);
                 }else if(type == 'code'){
-                    editorHandler.renderFileEditor(data, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+                    editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
                 }
             }).catch(function (error) {
                 Toast.fire({
