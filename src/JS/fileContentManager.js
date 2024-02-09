@@ -46,7 +46,7 @@ class fileContentManager {
                 for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                     if (this._data.offloadedFiles[i].path == file) {
                         return new Promise((resolve, reject) => {
-                            resolve(this._data.offloadedFiles[i].content)
+                            resolve({ "response": this._data.offloadedFiles[i].content, "MIME": this._data.offloadedFiles[i].MIME});
                         });
                     }
                 }
