@@ -12,9 +12,9 @@ if($type != 'file' && $type != 'folder'){
 
 $Data = file_get_contents('php://input');
 if($type == 'file'){
-if(!isset($Data)){
+if(!isset($Data) || $Data == ''){
     $Data = '';
-}
+}else{
 //split data by ',' as it is base64 encoded
 $Data = explode(',', $Data);
 $Data = $Data[1];
@@ -29,6 +29,7 @@ if($Data == false){
 if(strlen($Data) > 20000000){
     echo json_encode(array('status' => 'false', 'message' => 'File size is too large'));
     exit();
+}
 }
 }
 $PROJECTID = $_GET['PID'];
