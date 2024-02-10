@@ -14,9 +14,20 @@ if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
     exit();
 }
-//check if file/directory exists
 
-if($PATH[0] == "/"){
+// Validate $PROJECTID and $PATH
+if (!is_string($PROJECTID) || !preg_match('/^[a-zA-Z0-9]+$/', $PROJECTID)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid project ID'));
+    exit();
+}
+
+if (!is_string($PATH) || preg_match('/\.\./', $PATH)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid path'));
+    exit();
+}
+
+// Check if file/directory exists
+if ($PATH[0] == "/") {
     $PATH = substr($PATH, 1);
 }
 
@@ -25,9 +36,10 @@ if (!file_exists($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'File/Directory does not exist'));
     exit();
 }
-//delete file/directory
+
+// Delete file/directory
 if (is_dir($PATH)) {
-    //function to delete dictionaries content infinite depth
+    // Function to delete directory contents recursively
     function deleteDir($dirPath) {
         if (!is_dir($dirPath)) {
             throw new InvalidArgumentException("$dirPath must be a directory");
@@ -50,6 +62,7 @@ if (is_dir($PATH)) {
         unset($files);
         rmdir($dirPath);
     }
+
     deleteDir($PATH);
     echo json_encode(array('status' => 'true', 'message' => 'Directory deleted successfully'));
 } else {

@@ -15,6 +15,17 @@ if (!isset($PATH)) {
     exit();
 }
 
+// Validate $PROJECTID and $PATH
+if (!is_string($PROJECTID) || !preg_match('/^[a-zA-Z0-9]+$/', $PROJECTID)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid project ID'));
+    exit();
+}
+
+if (!is_string($PATH) || preg_match('/\.\./', $PATH)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid path'));
+    exit();
+}
+
 $file_path = '../projects/' . $PROJECTID . $PATH;
 
 // Check if the file exists

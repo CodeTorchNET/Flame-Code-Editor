@@ -14,9 +14,20 @@ if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
     exit();
 }
-//check if file/directory exists
 
-if($PATH[0] == "/"){
+// Validate $PROJECTID and $PATH
+if (!is_string($PROJECTID) || !preg_match('/^[a-zA-Z0-9]+$/', $PROJECTID)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid project ID'));
+    exit();
+}
+
+if (!is_string($PATH) || preg_match('/\.\./', $PATH)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid path'));
+    exit();
+}
+
+// Check if the path starts with a slash and remove it
+if ($PATH[0] == "/") {
     $PATH = substr($PATH, 1);
 }
 
@@ -26,9 +37,8 @@ if (!file_exists($PATH)) {
     exit();
 }
 
-
 $OLDNAME = $_GET['ON'];
-if(!isset($OLDNAME)){
+if (!isset($OLDNAME)) {
     echo json_encode(array('status' => 'false', 'message' => 'No old name provided'));
     exit();
 }
@@ -40,24 +50,28 @@ if (!isset($NEWNAME)) {
     exit();
 }
 
+// Validate $OLDNAME and $NEWNAME
+if (!is_string($OLDNAME) || !is_string($NEWNAME)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid names'));
+    exit();
+}
 
 $OlDLOCATION = $PATH . $OLDNAME;
 $NEWLOCATION = $PATH . $NEWNAME;
-if(!file_exists($OlDLOCATION)){
+if (!file_exists($OlDLOCATION)) {
     echo json_encode(array('status' => 'false', 'message' => 'File/Directory does not exist'));
     exit();
 }
-if(file_exists($NEWLOCATION)){
+if (file_exists($NEWLOCATION)) {
     echo json_encode(array('status' => 'false', 'message' => 'File/Directory already exists'));
     exit();
 }
 
-//rename file/directory
+// Rename file/directory
 if (rename($OlDLOCATION, $NEWLOCATION)) {
     echo json_encode(array('status' => 'true', 'message' => 'File renamed successfully'));
 } else {
     echo json_encode(array('status' => 'false', 'message' => 'Failed to rename file'));
     http_response_code(500);
 }
-
 ?>

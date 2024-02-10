@@ -10,6 +10,11 @@ if (!isset($PROJECTID)) {
     exit();
 }
 
+if (!is_string($PROJECTID) || !preg_match('/^[a-zA-Z0-9]+$/', $PROJECTID)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Invalid project ID'));
+    exit();
+}
+
 function listFilesRecursively($subfolder, $OGPath)
 {
     $files = glob($subfolder . '/*');
