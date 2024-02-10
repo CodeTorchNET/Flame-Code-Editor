@@ -13,7 +13,7 @@ class Sidebar {
                     throw new Error("No fileContentManager provided")
                 } else if (typeof FCM == 'object') {
                     if (FCM instanceof fileContentManager) {
-                        this._data.fileContentManager = fileContentManager;
+                        this._data.fileContentManager = FCM;
                     } else {
                         throw new Error("FCM should be an instance of fileContentManager")
                     }
@@ -369,7 +369,16 @@ class Sidebar {
                             </path>
                         </svg>
                         <p>Delete</p>
-                    </div>`;
+                    </div>
+                    <div class="download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6" style="width: 15px;">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25">
+                        </path>
+                       </svg>
+                        <p>Download</p>
+                    </div>
+                    `;
                     div.children[0].addEventListener('click', function () {
                         //remove popup
                         div.remove();
@@ -459,6 +468,43 @@ class Sidebar {
                                 this.deleteFile(currentCalculatedPath);
                             }
                         });
+                    }.bind(this));
+                    div.children[2].addEventListener('click', function () {
+                        //remove popup
+                        div.remove();
+                        //find parent and calculate path
+                        var currentCalculatedPath = [];
+                        var parent = element.parentNode;
+                        while (parent.id != 'sideMenu') {
+                            if (parent.className.includes('itemParent')) {
+                                currentCalculatedPath.push(parent.children[0].children[1].innerHTML);
+                            }
+                            parent = parent.parentNode;
+                        }
+                        currentCalculatedPath.reverse();
+                        //join path
+                        currentCalculatedPath = currentCalculatedPath.join('/');
+                        //check if file or folder
+                        if (element.className.includes('file')) {
+                            //add name to end of path
+                            currentCalculatedPath += '/' + element.children[1].innerHTML;
+                            if (currentCalculatedPath[0] != '/') {
+                                currentCalculatedPath = '/' + currentCalculatedPath;
+                            }
+                            this._data.fileContentManager.loadFile(currentCalculatedPath).then(function (data) {
+                                //response is a blob
+                                var url = URL.createObjectURL(data.response);
+                                var a = document.createElement('a');
+                                a.href = url;
+                                a.download = element.children[1].innerHTML;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                            }).catch(function (err) {
+                                throw new Error(err);
+                            });
+                        } else {
+                            throw new Error("Sadly downloading folders is not supported yet");
+                        }
                     }.bind(this));
                     div.addEventListener('contextmenu', function (e) {
                         e.preventDefault();

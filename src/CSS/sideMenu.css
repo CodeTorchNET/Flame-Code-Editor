@@ -145,8 +145,21 @@
 .rightClick .delete {
     display: flex;
     margin-top: 10px;
+    margin-bottom: 0px;
+    cursor: pointer;
+}
+
+.rightClick .download {
+    display: flex;
+    margin-top: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+    display: flex;
+}
+.rightClick .download p {
+    width: 100%;
+    text-align: center;
+    margin: 0px;
 }
 
 .rightClick .delete p {
