@@ -1,14 +1,14 @@
 //save files temporarily on edit even if Editor gets desposed
 
-
+const projectID = window.location.search.replaceAll('?','');
 
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
 var FCM = new fileContentManager();
 var PH = new PreviewHandler();
-FCM.init('1');
-PH.init(document.getElementById("preview"), document.getElementById('terminal'), '1');
+FCM.init(projectID);
+PH.init(document.getElementById("preview"), document.getElementById('terminal'), projectID);
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {
