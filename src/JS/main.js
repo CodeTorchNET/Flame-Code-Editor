@@ -1,5 +1,7 @@
 //save files temporarily on edit even if Editor gets desposed
 
+
+
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
@@ -25,6 +27,7 @@ FCM.loadFileStructure().then(function (data) {
 
 
 function checkType(MIME){
+    OG = MIME;
     MIME = MIME.split(';')[0];
     MIME = MIME.split('/')[0];
     if(MIME == 'image'){
@@ -32,7 +35,15 @@ function checkType(MIME){
     }else if(MIME == 'text'){
         return 'code';
     }else if(MIME == 'application'){
-        return 'code';
+        if(OG == 'application/octet-stream'){
+            return 'unknown';
+        }else{
+            return 'code';
+        }
+    }else if(MIME == 'video' || MIME == 'audio'){
+        return 'video';
+    }else{
+        return 'unknown';
     }
 }
 
@@ -158,6 +169,8 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
             editorHandler.renderImageEditor(data.response, data.MIME);
         }else if(type == 'code'){
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+        }else if(type == 'video'){
+            editorHandler.renderVideoEditor(data.response, e.detail.name);
         }
         //open it in top bar
         //check if it is already opened
@@ -206,6 +219,8 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
             editorHandler.renderImageEditor(data.response, data.MIME);
         }else if(type == 'code'){
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(path.split('.').pop()));
+        }else if(type == 'video'){
+            editorHandler.renderVideoEditor(data.response, path.split('/').pop());
         }
         sidebarHandler.setActive(Id);
         _data.currentOpenedFile = path;
@@ -336,6 +351,8 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
                     editorHandler.renderImageEditor(data.response, data.MIME);
                 }else if(type == 'code'){
                     editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
+                }else if(type == 'video'){
+                    editorHandler.renderVideoEditor(data.response, e.detail.name);
                 }
             }).catch(function (error) {
                 Toast.fire({
@@ -388,7 +405,7 @@ $('#sideMenuResize').mousedown(function (e) {
 $(document).mouseup(function (e) {
     if (dragging) {
         $('.sideMenu').css("width", e.pageX - 34);
-        $('#mainContent').css('width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width')) + 3)));
+        $('#mainContent').css('max-width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width')) + 3)));
 
         $('.MainRightThirdParent').css("min-width", (window.innerWidth - (e.pageX + (parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width'))))))));
         $('.MainRightThirdParent').css("max-width", (window.innerWidth - (e.pageX + (parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - (e.pageX + (parseInt(window.getComputedStyle(document.getElementsByClassName('MainRightThird')[0]).getPropertyValue('width'))))))));
@@ -426,7 +443,7 @@ $(document).mouseup(function (e) {
     if (draggingRight) {
         $('.MainRightThirdParent').css("min-width", (window.innerWidth - e.pageX));
         $('.MainRightThirdParent').css("max-width", (window.innerWidth - e.pageX));
-        $('#mainContent').css('width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - ((window.innerWidth - e.pageX) + (parseInt(window.getComputedStyle(document.getElementsByClassName('sideMenu')[0]).getPropertyValue('width')) + 40)));
+        $('#mainContent').css('max-width', parseInt(window.getComputedStyle(document.body).getPropertyValue('width')) - ((window.innerWidth - e.pageX) + (parseInt(window.getComputedStyle(document.getElementsByClassName('sideMenu')[0]).getPropertyValue('width')) + 40)));
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         draggingRight = false;

@@ -49,7 +49,35 @@ class Editor {
                 this._data.currentScreen = 'image';
                 this._data.target.innerHTML = '';
                 this._data.target.appendChild(imgElement);
-            };                   
+            },
+            this.renderVideoEditor = function (videoDataResponse,fileName) {
+                this._cleanUp();
+                var url = URL.createObjectURL(videoDataResponse);
+                var div = document.createElement('div');
+                var div2 = document.createElement('div');
+                div2.id = 'videoDownloader';
+                div2.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path></svg>Download';
+                div2.addEventListener('click', function() {
+                    function downloadBlob(blob, fileName) {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    }
+                    downloadBlob(videoDataResponse, fileName);
+                });                    
+                div.classList.add('videoViewer');
+                var videoElement = document.createElement('video');
+                videoElement.src = url;
+                videoElement.controls = true;
+                div.appendChild(div2);
+                div.appendChild(videoElement);
+                this._data.currentScreen = 'video';
+                this._data.target.innerHTML = '';
+                this._data.target.appendChild(div);
+            }                   
             this.renderError = function () {
             },
             this.renderWelcome = function () {

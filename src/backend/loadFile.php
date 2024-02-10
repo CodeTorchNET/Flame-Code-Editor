@@ -14,9 +14,22 @@ if (!isset($PATH)) {
     echo json_encode(array('status' => 'false', 'message' => 'No path provided'));
     exit();
 }
+
+$file_path = '../projects/' . $PROJECTID . $PATH;
+
+// Check if the file exists
+if (!file_exists($file_path)) {
+    echo json_encode(array('status' => 'false', 'message' => 'File not found'));
+    exit();
+}
+
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mime = finfo_file($finfo, '../projects/' . $PROJECTID . $PATH);
+$mime = finfo_file($finfo, $file_path);
 finfo_close($finfo);
+
+// Set proper content type header
 header('Content-Type: ' . $mime);
-echo file_get_contents('../projects/' . $PROJECTID . $PATH);
+
+// Output the file
+readfile($file_path);
 ?>
