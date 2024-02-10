@@ -39,6 +39,9 @@ class Sidebar {
                 if (name.includes('/')) {
                     throw new Error("Folder names can't contain / (Given Folder: " + name + ')')
                 }
+                if(name.includes('..')){
+                    throw new Error("Folder names can't contain .. (Given Folder: " + name + ')')
+                }
                 //check if folder name already taken
                 var div = document.createElement('div');
                 div.className = "itemParent";
