@@ -9,7 +9,7 @@ To install Flame, do the following:
 # Run using Docker (recommended)
 
 1. Clone the repository: `git clone https://github.com/CodeTorchNET/Flame-Code-Editor/tree/main`
-2. cd into the directory: `cd Flame-Code-Editor` than into `src` folder
+2. cd into the directory: `cd Flame-Code-Editor`
 3. run `docker build -t flame-code-editor .`
 4. then run `docker run -d -p 8080:80 flame-code-editor`
 5. You should be able to access the editor at `http://localhost:8080`

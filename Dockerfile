@@ -4,9 +4,6 @@ FROM php:8.3-apache
 # Copy the Apache virtual host configuration file
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Copy the custom start script
-# COPY start-apache /usr/local/bin/
-
 # Enable Apache modules
 RUN a2enmod rewrite
 
@@ -14,10 +11,13 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 
 # Copy application source from /src to /var/www/html
-COPY src/ .
+COPY src/ /var/www/html
 
 # Set file ownership
 RUN chown -R www-data:www-data /var/www/html
 
-# Start Apache
-CMD ["start-apache"]
+# Expose port 80 to the outside world
+EXPOSE 80
+
+# Start Apache (this is the default CMD of the php:8.3-apache image)
+CMD ["apache2-foreground"]
