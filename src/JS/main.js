@@ -41,7 +41,7 @@ function checkType(MIME){
             return 'code';
         }
     }else if(MIME == 'video' || MIME == 'audio'){
-        if(OG = 'video/quicktime'){
+        if(OG == 'video/quicktime'){
             return 'unknown'
         }
         return 'video';
