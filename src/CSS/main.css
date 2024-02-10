@@ -350,6 +350,7 @@ body {
     background-color: var(--main-background-border);
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 #videoDownloader svg{
@@ -362,4 +363,24 @@ body {
     width: 100%;
     margin-top: auto;
     margin-bottom: auto;
+}
+
+.errorScreen{
+    padding: 20px;margin-left: auto;width: fit-content;margin-right: auto;display: flex;flex-direction: column;height: 100%;padding-top: 0px;
+}
+
+.errorScreen .mainSVG{
+    color: var(--terminal-error-icon);width: 94px;margin-left: auto;margin-right: auto;margin-top: auto;
+}
+
+.errorScreen .title{
+    font-size: 26px;text-align: center;
+}
+
+.errorScreen .subtitle{
+    margin-bottom: 20px;text-align: center;
+}
+
+.errorScreen #videoDownloader{
+    margin-bottom: auto;width: fit-content;margin-left: auto;margin-right: auto;
 }

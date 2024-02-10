@@ -41,6 +41,9 @@ function checkType(MIME){
             return 'code';
         }
     }else if(MIME == 'video' || MIME == 'audio'){
+        if(OG = 'video/quicktime'){
+            return 'unknown'
+        }
         return 'video';
     }else{
         return 'unknown';
@@ -171,6 +174,10 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
         }else if(type == 'video'){
             editorHandler.renderVideoEditor(data.response, e.detail.name);
+        }else if(type == 'unknown'){
+            editorHandler.renderError(true, data.response, e.detail.name);
+        }else{
+            editorHandler.renderError(true, data.response, e.detail.name);
         }
         //open it in top bar
         //check if it is already opened
@@ -221,6 +228,10 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(path.split('.').pop()));
         }else if(type == 'video'){
             editorHandler.renderVideoEditor(data.response, path.split('/').pop());
+        }else if(type == 'unknown'){
+            editorHandler.renderError(true, data.response, path.split('/').pop());
+        }else{
+            editorHandler.renderError(true, data.response, path.split('/').pop());            
         }
         sidebarHandler.setActive(Id);
         _data.currentOpenedFile = path;
@@ -353,6 +364,10 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
                     editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
                 }else if(type == 'video'){
                     editorHandler.renderVideoEditor(data.response, e.detail.name);
+                }else if(type == 'unknown'){
+                    editorHandler.renderError(true, data.response, e.detail.name);
+                }else{
+                    editorHandler.renderError(true, data.response, e.detail.name);
                 }
             }).catch(function (error) {
                 Toast.fire({
