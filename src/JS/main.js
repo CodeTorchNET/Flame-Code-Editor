@@ -111,6 +111,7 @@ document.getElementById("sideMenu").addEventListener('fileRenamed', function (e)
     //path is equal to e.detail.oldPath substringed by the length of the old name (so only the path remains)
     var path = e.detail.oldPath.substring(0, e.detail.oldPath.length - e.detail.oldName.length);
     FCM.renameFile(path, e.detail.oldName, e.detail.newName).then(function () {
+        PH.reload();
         Toast.fire({
             icon: "success",
             title: "File renamed"
