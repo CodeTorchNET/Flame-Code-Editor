@@ -582,6 +582,10 @@ function uploadFolder(overrideFolderCreation = false) {
                     })
                     .catch(function (error) {
                         console.log('Error creating file:', element.fileName, error);
+                        Toast.fire({
+                            icon: "error",
+                            title: "An error occured while trying to upload the file "+element.fileName+": " + error
+                        });
                     })
             }
             internalFileUploader(filesEnd[0], 0, filesEnd);
@@ -614,6 +618,10 @@ function uploadFolder(overrideFolderCreation = false) {
                 })
                 .catch(function (error) {
                     console.log('Error creating folder:', path, error);
+                    Toast.fire({
+                        icon: "error",
+                        title: "An error occured while trying to upload the folder: " + error
+                    });
                 })
         }
         if(overrideFolderCreation){
