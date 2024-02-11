@@ -197,6 +197,13 @@ class fileContentManager {
                         console.error('Error:', error);
                     });
                 });
+            },
+            this.zipHandler = function (path){
+                return new Promise((resolve, reject) => {
+                    //open zip link in new tab
+                    window.open('/backend/zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');
+                    resolve();
+                });
             }
         this.saveFile = function (file, content) {
             // Save the file temporarily

@@ -506,7 +506,15 @@ class Sidebar {
                                 throw new Error(err);
                             });
                         } else {
-                            throw new Error("Sadly downloading folders is not supported yet");
+                            currentCalculatedPath = '/' + currentCalculatedPath + '/';
+                            this._data.fileContentManager.zipHandler(currentCalculatedPath).then(function (data) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Download started'
+                                });
+                            }).catch(function (err) {
+                                throw new Error(err);
+                            });
                         }
                     }.bind(this));
                     div.addEventListener('contextmenu', function (e) {
