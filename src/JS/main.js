@@ -127,6 +127,9 @@ document.getElementById("sideMenu").addEventListener('fileRenamed', function (e)
             if (element.path == e.detail.oldPath) {
                 element.name = e.detail.newName;
                 element.path = e.detail.absPath;
+                if(_data.currentOpenedFile == e.detail.oldPath){
+                    _data.currentOpenedFile = e.detail.absPath;
+                }
             }
         });
     }).catch(function (error) {
@@ -356,7 +359,7 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
             });
             //set active
             topMenuHandler.setActive(topMenuId, true);
-            _data.currentOpenedFile = e.detail.path;
+            _data.currentOpenedFile = ('/' + e.detail.path.join('/') + '/' + e.detail.name).replaceAll('//','/');
             FCM.loadFile(Path + e.detail.name).then(function (data) {
                 var type = checkType(data.MIME);
                 if(type == 'image'){

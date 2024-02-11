@@ -209,6 +209,7 @@ class fileContentManager {
             // Save the file temporarily
             for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                 if (this._data.offloadedFiles[i].path == file) {
+                    content = new Blob([content], { type: this._data.offloadedFiles[i].MIME });
                     this._data.offloadedFiles[i].content = content;
                     this._data.offloadedFiles[i].syncedWithRemote = false;
                     return;
