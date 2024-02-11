@@ -9,6 +9,17 @@ class fileContentManager {
                 throw new Error("No remote provided")
             } else if (typeof projectID == 'string') {
                 this._data.projectID = projectID;
+                window.onbeforeunload = function() {
+                    var temp = false;
+                    for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                        if (this._data.offloadedFiles[i].syncedWithRemote == false) {
+                            temp = true;
+                        }
+                    }
+                    if (temp) {
+                        return "You have unsaved changes. Are you sure you want to leave?";
+                    }
+                }.bind(this);
             } else {
                 throw new Error("Remote is not a string")
             }
