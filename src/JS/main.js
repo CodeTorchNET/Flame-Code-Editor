@@ -1,6 +1,6 @@
 //save files temporarily on edit even if Editor gets desposed
 
-const projectID = window.location.search.replaceAll('?','');
+const projectID = window.location.search.replaceAll('?', '');
 
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
@@ -12,9 +12,9 @@ PH.init(document.getElementById("preview"), document.getElementById('terminal'),
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {
-        if(data[i].TYPE == 'file'){
-            sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE,data[i].FILENAME.split('.').pop());
-        }else{
+        if (data[i].TYPE == 'file') {
+            sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE, data[i].FILENAME.split('.').pop());
+        } else {
             sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE);
         }
     }
@@ -26,26 +26,26 @@ FCM.loadFileStructure().then(function (data) {
 });
 
 
-function checkType(MIME){
+function checkType(MIME) {
     OG = MIME;
     MIME = MIME.split(';')[0];
     MIME = MIME.split('/')[0];
-    if(MIME == 'image'){
+    if (MIME == 'image') {
         return 'image';
-    }else if(MIME == 'text'){
+    } else if (MIME == 'text') {
         return 'code';
-    }else if(MIME == 'application'){
-        if(OG == 'application/octet-stream'){
+    } else if (MIME == 'application') {
+        if (OG == 'application/octet-stream') {
             return 'unknown';
-        }else{
+        } else {
             return 'code';
         }
-    }else if(MIME == 'video' || MIME == 'audio'){
-        if(OG == 'video/quicktime'){
+    } else if (MIME == 'video' || MIME == 'audio') {
+        if (OG == 'video/quicktime') {
             return 'unknown'
         }
         return 'video';
-    }else{
+    } else {
         return 'unknown';
     }
 }
@@ -127,7 +127,7 @@ document.getElementById("sideMenu").addEventListener('fileRenamed', function (e)
             if (element.path == e.detail.oldPath) {
                 element.name = e.detail.newName;
                 element.path = e.detail.absPath;
-                if(_data.currentOpenedFile == e.detail.oldPath){
+                if (_data.currentOpenedFile == e.detail.oldPath) {
                     _data.currentOpenedFile = e.detail.absPath;
                 }
             }
@@ -172,15 +172,15 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
     _data.currentOpenedFile = e.detail.path;
     FCM.loadFile(e.detail.path).then(function (data) {
         var type = checkType(data.MIME);
-        if(type == 'image'){
+        if (type == 'image') {
             editorHandler.renderImageEditor(data.response, data.MIME);
-        }else if(type == 'code'){
+        } else if (type == 'code') {
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
-        }else if(type == 'video'){
+        } else if (type == 'video') {
             editorHandler.renderVideoEditor(data.response, e.detail.name);
-        }else if(type == 'unknown'){
+        } else if (type == 'unknown') {
             editorHandler.renderError(true, data.response, e.detail.name);
-        }else{
+        } else {
             editorHandler.renderError(true, data.response, e.detail.name);
         }
         //open it in top bar
@@ -226,16 +226,16 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
     });
     FCM.loadFile(path).then(function (data) {
         var type = checkType(data.MIME);
-        if(type == 'image'){
+        if (type == 'image') {
             editorHandler.renderImageEditor(data.response, data.MIME);
-        }else if(type == 'code'){
+        } else if (type == 'code') {
             editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(path.split('.').pop()));
-        }else if(type == 'video'){
+        } else if (type == 'video') {
             editorHandler.renderVideoEditor(data.response, path.split('/').pop());
-        }else if(type == 'unknown'){
+        } else if (type == 'unknown') {
             editorHandler.renderError(true, data.response, path.split('/').pop());
-        }else{
-            editorHandler.renderError(true, data.response, path.split('/').pop());            
+        } else {
+            editorHandler.renderError(true, data.response, path.split('/').pop());
         }
         sidebarHandler.setActive(Id);
         _data.currentOpenedFile = path;
@@ -359,18 +359,18 @@ document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
             });
             //set active
             topMenuHandler.setActive(topMenuId, true);
-            _data.currentOpenedFile = ('/' + e.detail.path.join('/') + '/' + e.detail.name).replaceAll('//','/');
+            _data.currentOpenedFile = ('/' + e.detail.path.join('/') + '/' + e.detail.name).replaceAll('//', '/');
             FCM.loadFile(Path + e.detail.name).then(function (data) {
                 var type = checkType(data.MIME);
-                if(type == 'image'){
+                if (type == 'image') {
                     editorHandler.renderImageEditor(data.response, data.MIME);
-                }else if(type == 'code'){
+                } else if (type == 'code') {
                     editorHandler.renderFileEditor(data.response, editorHandler.languageEquivalent(e.detail.name.split('.').pop()));
-                }else if(type == 'video'){
+                } else if (type == 'video') {
                     editorHandler.renderVideoEditor(data.response, e.detail.name);
-                }else if(type == 'unknown'){
+                } else if (type == 'unknown') {
                     editorHandler.renderError(true, data.response, e.detail.name);
-                }else{
+                } else {
                     editorHandler.renderError(true, data.response, e.detail.name);
                 }
             }).catch(function (error) {
@@ -510,9 +510,9 @@ function uploadFolder(overrideFolderCreation = false) {
     function internal() {
         return new Promise((resolve, reject) => {
             var UploadinputEl = '';
-            if(overrideFolderCreation){
+            if (overrideFolderCreation) {
                 UploadinputEl = document.getElementById('fileInput');
-            }else{
+            } else {
                 UploadinputEl = document.getElementById('folderInput');
             }
             const files = UploadinputEl.files;
@@ -566,20 +566,20 @@ function uploadFolder(overrideFolderCreation = false) {
                     path = path + '/';
                 }
                 var finalPath = _data.currentCreatePath + path;
-                if(overrideFolderCreation){
+                if (overrideFolderCreation) {
                     finalPath = _data.currentCreatePath;
                 }
-                FCM.createFile(finalPath,fileName, 'file',element.content)
+                FCM.createFile(finalPath, fileName, 'file', element.content)
                     .then(function () {
-                        sidebarHandler.add(finalPath,fileName, 'file');
+                        sidebarHandler.add(finalPath, fileName, 'file');
                         Toast.fire({
                             icon: "success",
                             title: "Uploaded " + (index + 1) + " of " + (array.length) + ' files',
                         });
-                        if(index === array.length - 1){
+                        if (index === array.length - 1) {
                             //done creating files
                             return;
-                        }else{
+                        } else {
                             internalFileUploader(array[index + 1], index + 1, array);
                         }
                     })
@@ -587,7 +587,7 @@ function uploadFolder(overrideFolderCreation = false) {
                         console.log('Error creating file:', element.fileName, error);
                         Toast.fire({
                             icon: "error",
-                            title: "An error occured while trying to upload the file "+element.fileName+": " + error
+                            title: "An error occured while trying to upload the file " + element.fileName + ": " + error
                         });
                     })
             }
@@ -612,10 +612,10 @@ function uploadFolder(overrideFolderCreation = false) {
                         icon: "success",
                         title: "Completed " + (index + 1) + " of " + array.length + ' preperations',
                     });
-                    if(index === array.length - 1){
+                    if (index === array.length - 1) {
                         //done creating folders
                         intneralFileUploader();
-                    }else{
+                    } else {
                         internalFolderCreator(array[index + 1], index + 1, array);
                     }
                 })
@@ -627,10 +627,32 @@ function uploadFolder(overrideFolderCreation = false) {
                     });
                 })
         }
-        if(overrideFolderCreation){
+        if (overrideFolderCreation) {
             intneralFileUploader();
-        }else{
-        internalFolderCreator(newFoldersToCreate[0], 0, newFoldersToCreate);
+        } else {
+            internalFolderCreator(newFoldersToCreate[0], 0, newFoldersToCreate);
         }
     });
 }
+
+document.getElementById('reload').addEventListener('click', function () {
+    PH.reload();
+});
+
+document.getElementById('fullscreen').addEventListener('click', function () {
+    //check if already fullscreen
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        var elem = document.getElementsByClassName('previewParent')[0];
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    }
+});

@@ -39,17 +39,23 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                     </svg>
-                    <label id="uploadFileIcon" for="fileInput" style="cursor: pointer;">    
-                    <svg id="uploadFile" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                      </svg>   
-                    </label>                   
-                    <label for="folderInput" style="cursor: pointer;" id="uploadFolderIcon">
-                        <svg style="width: 16px;height:16px" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="m13.06 6.31-2.12-2.12c-0.28128-0.28163-0.66296-0.43992-1.061-0.44h-5.379c-1.2426 0-2.25 1.0074-2.25 2.25v12c0 1.2426 1.0074 2.25 2.25 2.25h15c1.2426 0 2.25-1.0074 2.25-2.25v-9c0-1.2426-1.0074-2.25-2.25-2.25h-5.379c-0.39769-3.501e-4 -0.77896-0.15862-1.06-0.44zm-1.06 10.387v-6.75m0 0 3 3m-3-3-3 3" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>        
+                    <label id="uploadFileIcon" for="fileInput" style="cursor: pointer;">
+                        <svg id="uploadFile" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
                     </label>
-                    <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="uploadFolder()">
+                    <label for="folderInput" style="cursor: pointer;" id="uploadFolderIcon">
+                        <svg style="width: 16px;height:16px" class="w-6 h-6" fill="none" stroke="currentColor"
+                            stroke-width="1.5" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="m13.06 6.31-2.12-2.12c-0.28128-0.28163-0.66296-0.43992-1.061-0.44h-5.379c-1.2426 0-2.25 1.0074-2.25 2.25v12c0 1.2426 1.0074 2.25 2.25 2.25h15c1.2426 0 2.25-1.0074 2.25-2.25v-9c0-1.2426-1.0074-2.25-2.25-2.25h-5.379c-0.39769-3.501e-4 -0.77896-0.15862-1.06-0.44zm-1.06 10.387v-6.75m0 0 3 3m-3-3-3 3"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </label>
+                    <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;"
+                        onchange="uploadFolder()">
                     <input type="file" id="fileInput" style="display: none;" onchange="uploadFolder(true)" multiple>
                 </div>
                 <div class="sideMenuWrapper">
@@ -87,28 +93,41 @@
                     <div id="RightSideResize"></div>
                     <div class="MainRightThird">
                         <div class="previewParent">
+                            <div class="previewTopMenu"><svg id="reload" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"
+                                    stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99">
+                                    </path>
+                                </svg><svg id="fullscreen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15">
+                                    </path>
+                                </svg>
+                            </div>
                             <iframe id="preview"></iframe>
                         </div>
                         <div id="TopSideResize"></div>
                         <div class="terminal">
                             <div class="terminalOptions">
                                 <p class="terminalHead">Terminal:</p>
-                                <svg class="errorIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-6 h-6">
+                                <svg class="errorIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor" class="w-6 h-6">
                                     <path fill-rule="evenodd"
                                         d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <p id="errorNumber">0</p>
-                                <svg class="warningIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-6 h-6">
+                                <svg class="warningIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor" class="w-6 h-6">
                                     <path fill-rule="evenodd"
                                         d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <p id="warningNumber">0</p>
-                                <svg id="clearTerminal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <svg id="clearTerminal" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                 </svg>
