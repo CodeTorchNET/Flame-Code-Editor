@@ -22,10 +22,12 @@ class Sidebar {
                 }
                 //right click menu
                 function handleRightClick(e) {
-                    if (!(e.target.className == 'rename' || e.target.className == 'delete' || e.target.className == 'rightClick' || e.target.parentNode.className == 'delete' || e.target.parentNode.className == 'rename')) {
-                        //check if clicking on top of right click menu
-                        if (document.getElementsByClassName('rightClick').length != 0) {
-                            document.getElementsByClassName('rightClick')[0].remove();
+                    if (e.target != null && e.target.className != undefined && e.target.parentNode != null && e.target.parentNode.className != undefined) {
+                        if (!(e.target.className == 'rename' || e.target.className == 'delete' || e.target.className == 'rightClick' || e.target.parentNode.className == 'delete' || e.target.parentNode.className == 'rename')) {
+                            //check if clicking on top of right click menu
+                            if (document.getElementsByClassName('rightClick').length != 0) {
+                                document.getElementsByClassName('rightClick')[0].remove();
+                            }
                         }
                     }
                 }
@@ -39,7 +41,7 @@ class Sidebar {
                 if (name.includes('/')) {
                     throw new Error("Folder names can't contain / (Given Folder: " + name + ')')
                 }
-                if(name.includes('..')){
+                if (name.includes('..')) {
                     throw new Error("Folder names can't contain .. (Given Folder: " + name + ')')
                 }
                 //check if folder name already taken
@@ -436,7 +438,7 @@ class Sidebar {
                         //remove popup
                         div.remove();
                         Swal.fire({
-                            title: "Are you sure you want to delete "+element.children[1].innerHTML+"?",
+                            title: "Are you sure you want to delete " + element.children[1].innerHTML + "?",
                             text: "This CANNOT be undone",
                             showCancelButton: true,
                             confirmButtonText: "Yes, delete it",

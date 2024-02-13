@@ -9,7 +9,7 @@ class fileContentManager {
                 throw new Error("No remote provided")
             } else if (typeof projectID == 'string') {
                 this._data.projectID = projectID;
-                window.onbeforeunload = function() {
+                window.onbeforeunload = function () {
                     var temp = false;
                     for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                         if (this._data.offloadedFiles[i].syncedWithRemote == false) {
@@ -57,7 +57,7 @@ class fileContentManager {
                 for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                     if (this._data.offloadedFiles[i].path == file) {
                         return new Promise((resolve, reject) => {
-                            resolve({ "response": this._data.offloadedFiles[i].content, "MIME": this._data.offloadedFiles[i].MIME});
+                            resolve({ "response": this._data.offloadedFiles[i].content, "MIME": this._data.offloadedFiles[i].MIME });
                         });
                     }
                 }
@@ -77,7 +77,7 @@ class fileContentManager {
                             throw new Error('Failed to load file');
                         }
                     }).then(data => {
-                        this._data.offloadedFiles.push({ path: file, content: data.response,MIME:data.MIME, syncedWithRemote: true })
+                        this._data.offloadedFiles.push({ path: file, content: data.response, MIME: data.MIME, syncedWithRemote: true })
                         resolve(data);
                     }).catch(error => {
                         console.error('Error:', error);
@@ -199,8 +199,8 @@ class fileContentManager {
                             } else {
                                 content = new Blob([content], { type: data.mime });
                             }
-                            if(type === "file"){
-                            this._data.offloadedFiles.push({ path: path + name, content: content, MIME: data.mime, syncedWithRemote: true });
+                            if (type === "file") {
+                                this._data.offloadedFiles.push({ path: path + name, content: content, MIME: data.mime, syncedWithRemote: true });
                             }
                             resolve();
                         }
@@ -209,7 +209,7 @@ class fileContentManager {
                     });
                 });
             },
-            this.zipHandler = function (path){
+            this.zipHandler = function (path) {
                 return new Promise((resolve, reject) => {
                     //open zip link in new tab
                     window.open('/backend/zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');

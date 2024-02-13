@@ -2,6 +2,8 @@
 
 const projectID = window.location.search.replaceAll('?', '');
 
+
+var currentTheme = 'dark';
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
@@ -25,6 +27,55 @@ FCM.loadFileStructure().then(function (data) {
     });
 });
 
+document.getElementById('themeHandler').addEventListener('click', function () {
+    if (currentTheme == 'dark') {
+        document.getElementById('themeHandler').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"></path>';
+        document.body.classList.add('light');
+        if(typeof monaco != 'undefined' && typeof monaco.editor != 'undefined' && typeof monaco.editor.setTheme != 'undefined'){
+            monaco.editor.setTheme('');
+        }
+        currentTheme = 'light';
+    } else {
+        document.getElementById('themeHandler').innerHTML = '<path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd"></path>';
+        document.body.classList.remove('light');
+        if(typeof monaco != 'undefined' && typeof monaco.editor != 'undefined' && typeof monaco.editor.setTheme != 'undefined'){
+            monaco.editor.setTheme('vs-dark');
+        }
+        currentTheme = 'dark';
+    }
+});
+
+document.getElementById('toptopMenuDownload').addEventListener('click', function () {
+    Swal.fire({
+        title: 'Download Project',
+        text: 'Do you want to download the whole project? (this might take a while) (Just be patient, it will download)',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            FCM.zipHandler('/');
+        }
+    });
+});
+
+document.getElementById('toptopMenuShare').addEventListener('click', function () {
+    Toast.fire({
+        icon: "info",
+        title: "This feature only exists at CodeTorch"
+    });
+});
+document.getElementById('toptopMenuSettings').addEventListener('click', function () {
+    Toast.fire({
+        icon: "info",
+        title: "This feature is not implemented yet"
+    });
+});
+
+document.getElementById('saveNow').style.visibility = 'hidden';
+document.getElementById('saveNow').addEventListener('click', function () {
+});
 
 function checkType(MIME) {
     OG = MIME;

@@ -5,7 +5,6 @@
   overflow-x: scroll;
   overflow-y: hidden;
   border-bottom: 1px var(--border) solid;
-  border-top: 1px var(--border) solid;
   width: 100%;
 }
 

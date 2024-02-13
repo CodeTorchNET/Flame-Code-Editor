@@ -26,7 +26,7 @@ class Editor {
                         this._data.editor = monaco.editor.create(target, {
                             value: value,
                             language: language,
-                            theme: 'vs-dark',
+                            theme: document.body.classList.contains('light') ? '' : 'vs-dark',
                             automaticLayout: true
                         });
                         this._data.editor.getModel().onDidChangeContent(function (event) {
