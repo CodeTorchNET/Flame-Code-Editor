@@ -73,8 +73,20 @@ document.getElementById('toptopMenuSettings').addEventListener('click', function
     });
 });
 
+document.getElementById('seeProjectPage').addEventListener('click', function () {
+    Toast.fire({
+        icon: "info",
+        title: "This feature only exists at CodeTorch"
+    });
+});
+
 document.getElementById('saveNow').style.visibility = 'hidden';
 document.getElementById('saveNow').addEventListener('click', function () {
+    Toast.fire({
+        icon: "info",
+        title: "I am honestly too tired to implement this feature right now, if you want to save the file, just press Ctrl/CMD + S",
+        text: "Or help me implement it by contributing to the project"
+    });
 });
 
 function checkType(MIME) {
@@ -377,6 +389,7 @@ document.getElementById('sideMenu').addEventListener('folderDeleted', function (
 
 document.addEventListener('fileEdited', function (e) {
     topMenuHandler.changeState(topMenuHandler._data.activeElement, true);
+    document.getElementById('saveNow').style.visibility = '';
     var currentOpenedPath = null;
     _data.filesOpened.forEach(function (element) {
         if (element.topMenuId == topMenuHandler._data.activeElement) {
