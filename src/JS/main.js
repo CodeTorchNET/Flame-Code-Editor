@@ -1,7 +1,9 @@
-//save files temporarily on edit even if Editor gets desposed
-
-const projectID = window.location.search.replaceAll('?', '');
-
+// Bunch of variables so things work with CodeTorch
+const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('https://localhost/');
+const projectID = runningInCodeTorch ? location.pathname.split('/projects/')[1].split('/editor')[0].split('/fullscreen')[0].replaceAll('/', '') : window.location.search.replaceAll('?', '');
+const APILocation = runningInCodeTorch ? '/projects/API/' : '/backend/';
+const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/';
+const terminalOverrideLocation = runningInCodeTorch ? '/projects/JS/terminal.js' : '/JS/terminal.js';
 
 var currentTheme = 'dark';
 var topMenuHandler = new TopBar();
@@ -9,8 +11,8 @@ topMenuHandler.init(document.getElementById("topMenu"));
 var sidebarHandler = new Sidebar();
 var FCM = new fileContentManager();
 var PH = new PreviewHandler();
-FCM.init(projectID);
-PH.init(document.getElementById("preview"), document.getElementById('terminal'), projectID);
+FCM.init(projectID,APILocation);
+PH.init(document.getElementById("preview"), document.getElementById('terminal'), projectID,PreviewLocation,terminalOverrideLocation);
 FCM.loadFileStructure().then(function (data) {
     sidebarHandler.init(document.getElementById("sideMenu"), FCM);
     for (var i = 0; i < data.length; i++) {

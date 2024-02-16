@@ -61,6 +61,12 @@ function listFilesRecursively($subfolder, $OGPath)
     return $fileInfoArray;
 }
 
+//check if path exists
+if (!file_exists(__DIR__ . '/../../projects/' . $PROJECTID)) {
+    echo json_encode(array('status' => 'false', 'message' => 'Project does not exist'));
+    exit();
+}
+
 $currentPath = __DIR__;
 // Remove /backend from the end of the path
 $currentPath = substr($currentPath, 0, -8);

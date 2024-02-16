@@ -574,3 +574,7 @@ body {
 #themeHandler{
     cursor: pointer;
 }
+
+.main{
+    height: calc(100% - 55px);
+}

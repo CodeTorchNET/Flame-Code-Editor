@@ -4,11 +4,12 @@
  */
 class fileContentManager {
     constructor() {
-        this.init = function (projectID) {
+        this.init = function (projectID, APILoc = '/backend/') {
             if (typeof projectID == "undefined") {
                 throw new Error("No remote provided")
             } else if (typeof projectID == 'string') {
                 this._data.projectID = projectID;
+                this._data.APILocation = APILoc;
                 window.onbeforeunload = function () {
                     var temp = false;
                     for (var i = 0; i < this._data.offloadedFiles.length; i++) {
@@ -27,7 +28,7 @@ class fileContentManager {
             this.loadFileStructure = function () {
                 return new Promise((resolve, reject) => {
                     // Load the file structure from the remote
-                    fetch('/backend/loadProjectFileStructure.php?PID=' + this._data.projectID, {
+                    fetch(this._data.APILocation+'loadProjectFileStructure.php?PID=' + this._data.projectID, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -63,7 +64,7 @@ class fileContentManager {
                 }
                 // Load the file from the remote
                 return new Promise((resolve, reject) => {
-                    fetch('/backend/loadFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                    fetch(this._data.APILocation+'loadFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ class fileContentManager {
                     if (typeof PATH == "undefined" || typeof oldName == "undefined" || typeof newName == "undefined") {
                         reject("Invalid parameters");
                     }
-                    fetch('/backend/renameFile.php?PID=' + this._data.projectID + '&PATH=' + PATH + '&ON=' + oldName + '&NN=' + newName, {
+                    fetch(this._data.APILocation+'renameFile.php?PID=' + this._data.projectID + '&PATH=' + PATH + '&ON=' + oldName + '&NN=' + newName, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -130,7 +131,7 @@ class fileContentManager {
                     if (file == '') {
                         reject("Invalid file");
                     }
-                    fetch('/backend/deleteFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                    fetch(this._data.APILocation+'deleteFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -171,7 +172,7 @@ class fileContentManager {
                     if (type != "file" && type != "folder") {
                         reject("Invalid type");
                     }
-                    fetch('/backend/createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
+                    fetch(this._data.APILocation+'createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'text/plain'
@@ -212,7 +213,7 @@ class fileContentManager {
             this.zipHandler = function (path) {
                 return new Promise((resolve, reject) => {
                     //open zip link in new tab
-                    window.open('/backend/zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');
+                    window.open(this._data.APILocation+'zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');
                     resolve();
                 });
             }
@@ -233,7 +234,7 @@ class fileContentManager {
                     for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                         if (this._data.offloadedFiles[i].path == file) {
                             const increment = i;
-                            fetch('/backend/saveFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                            fetch(this._data.APILocation+'saveFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -271,6 +272,7 @@ class fileContentManager {
         this._data = {
             projectID: null,
             offloadedFiles: [],
+            APILocation: '/backend/'
         }
     }
 }

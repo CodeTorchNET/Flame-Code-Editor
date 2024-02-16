@@ -1,10 +1,12 @@
 class PreviewHandler {
     constructor() {
-        this.init = function (el, terminalEl, id) {
+        this.init = function (el, terminalEl, id,embedPath = '/projects/',terminalPath = '/JS/terminal.js') {
+            this._data.embedPath = embedPath;
             this._data.PID = id;
             this._data.el = el;
             this._data.terminalEl = terminalEl;
-            el.src = `/projects/${id}/index.html`;
+            this._data.terminalPath = terminalPath;
+            el.src = `${embedPath}${id}/index.html`;
             this._attachTerminal();
             this.waitForMessageFromTerminal();
             let lastScrollTop = 0;
@@ -37,7 +39,7 @@ class PreviewHandler {
             }.bind(this));
         },
             this.reload = function () {
-                this._data.el.src = `/projects/${this._data.PID}/index.html`
+                this._data.el.src = `${this._data.embedPath}${this._data.PID}/index.html`
                 this._attachTerminal();
                 if(!this._data.persistLogs){
                     this._data.terminalEl.innerHTML = '';
@@ -51,7 +53,7 @@ class PreviewHandler {
                 this._data.el.onload = function () {
                     var iframeDocument = this._data.el.contentDocument || this._data.el.contentWindow.document;
                     var terminalOverride = document.createElement('script');
-                    terminalOverride.src = '/JS/terminal.js';
+                    terminalOverride.src = this._data.terminalPath;
                     iframeDocument.body.appendChild(terminalOverride);
                 }.bind(this)
             },
