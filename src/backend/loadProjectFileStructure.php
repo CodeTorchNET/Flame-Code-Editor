@@ -5,7 +5,7 @@ header("Pragma: no-cache");
 header('Content-Type: application/json');
 
 //File location override
-$location = '/../../projects/';
+$location = '/../projects/';
 //check if ../../CodeTorchOverride.php exists
 if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
     include(__DIR__ . '/../../CodeTorchOverride.php');
