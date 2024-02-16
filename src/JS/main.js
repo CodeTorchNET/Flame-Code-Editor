@@ -4,17 +4,18 @@ const projectID = runningInCodeTorch ? location.pathname.split('/projects/')[1].
 const APILocation = runningInCodeTorch ? '/projects/API/' : '/backend/';
 const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/';
 const terminalOverrideLocation = runningInCodeTorch ? '/projects/JS/terminal.js' : '/JS/terminal.js';
+const assetPathLocation = runningInCodeTorch ? '/projects/assets/' : '/assets/';
 
 var currentTheme = 'dark';
 var topMenuHandler = new TopBar();
-topMenuHandler.init(document.getElementById("topMenu"));
+topMenuHandler.init(document.getElementById("topMenu"),assetPathLocation);
 var sidebarHandler = new Sidebar();
 var FCM = new fileContentManager();
 var PH = new PreviewHandler();
 FCM.init(projectID,APILocation);
 PH.init(document.getElementById("preview"), document.getElementById('terminal'), projectID,PreviewLocation,terminalOverrideLocation);
 FCM.loadFileStructure().then(function (data) {
-    sidebarHandler.init(document.getElementById("sideMenu"), FCM);
+    sidebarHandler.init(document.getElementById("sideMenu"), FCM,assetPathLocation);
     for (var i = 0; i < data.length; i++) {
         if (data[i].TYPE == 'file') {
             sidebarHandler.add(data[i].PATH, data[i].FILENAME, data[i].TYPE, data[i].FILENAME.split('.').pop());

@@ -4,7 +4,7 @@
  */
 class TopBar {
     constructor() {
-        this.init = function (el) {
+        this.init = function (el,assetPath = '/assets/') {
             if (typeof el == "undefined") {
                 throw new Error("No element provided")
             } else if (typeof el == 'object') {
@@ -19,6 +19,7 @@ class TopBar {
                     }.bind(this),
                 });
                 this._data.target = el
+                this._data.assetPath = assetPath;
             } else {
                 throw new Error("Element is not an object")
 
@@ -28,9 +29,9 @@ class TopBar {
             var element = document.createElement("div");
             var icon = document.createElement("img");
             if (this._data.filesKnown.indexOf(icon_name) != -1) {
-                icon.src = "/assets/" + this._data.fileIcons[icon_name];
+                icon.src = this._data.assetPath + this._data.fileIcons[icon_name];
             } else {
-                icon.src = "/assets/text.svg";
+                icon.src = this._data.assetPath+"text.svg";
             }
             icon.className = "icon";
             element.appendChild(icon);
@@ -246,6 +247,7 @@ class TopBar {
             currID: 0,
             editedSVG: '<div></div>',
             crossedSVG: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>',
+            assetPath: '/assets/',
         }
     }
 

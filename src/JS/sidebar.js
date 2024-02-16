@@ -4,7 +4,7 @@
  */
 class Sidebar {
     constructor() {
-        this.init = function (el, FCM) {
+        this.init = function (el, FCM, assetPath = '/assets/') {
             if (typeof el == "undefined") {
                 throw new Error("No element provided")
             } else if (typeof el == 'object') {
@@ -14,6 +14,7 @@ class Sidebar {
                 } else if (typeof FCM == 'object') {
                     if (FCM instanceof fileContentManager) {
                         this._data.fileContentManager = FCM;
+                        this._data.assetPath = assetPath;
                     } else {
                         throw new Error("FCM should be an instance of fileContentManager")
                     }
@@ -142,9 +143,9 @@ class Sidebar {
                 this._data.currID++
                 var img = document.createElement('img');
                 if (this._data.filesKnown.indexOf(icon_name) == -1) {
-                    img.src = '/assets/text.svg';
+                    img.src = this._data.assetPath+'text.svg';
                 } else {
-                    img.src = "/assets/" + this._data.fileIcons[icon_name];
+                    img.src = this._data.assetPath + this._data.fileIcons[icon_name];
                 }
                 div.appendChild(img);
                 var p = document.createElement('p');
@@ -258,7 +259,7 @@ class Sidebar {
                     div.className = "item file";
                     div.id = 'tempCreationHandler';
                     var img = document.createElement('img');
-                    img.src = "/assets/text.svg";
+                    img.src = this._data.assetPath+"text.svg";
                     div.appendChild(img);
                     var input = document.createElement('input');
                     input.type = 'text';
@@ -282,9 +283,9 @@ class Sidebar {
                         } else {
                             //change icon   
                             if (this._data.fileIcons[input.value.split('.').pop()] != undefined) {
-                                img.src = "/assets/" + this._data.fileIcons[input.value.split('.').pop()];
+                                img.src = this._data.assetPath + this._data.fileIcons[input.value.split('.').pop()];
                             } else {
-                                img.src = "/assets/text.svg";
+                                img.src = this._data.assetPath+"text.svg";
                             }
                         }
                     }.bind(this))
@@ -619,9 +620,9 @@ class Sidebar {
                         parent.children[childNumber].children[1].innerHTML = newName;
                         //change icon
                         if (this._data.fileIcons[newName.split('.').pop()] != undefined) {
-                            parent.children[childNumber].children[0].src = "/assets/" + this._data.fileIcons[newName.split('.').pop()];
+                            parent.children[childNumber].children[0].src = this._data.assetPath + this._data.fileIcons[newName.split('.').pop()];
                         } else {
-                            parent.children[childNumber].children[0].src = "/assets/text.svg";
+                            parent.children[childNumber].children[0].src = this._data.assetPath+"text.svg";
 
                         }
                     } else {
@@ -706,6 +707,7 @@ class Sidebar {
             currID: 0,
             activeFile: null,
             fileContentManager: null,
+            assetPath: '/assets/',
         }
     }
 
