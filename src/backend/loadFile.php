@@ -3,6 +3,19 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 
+
+
+//File location override
+$location = '../projects/';
+//check if ../../CodeTorchOverride.php exists
+if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
+    include(__DIR__ . '/../../CodeTorchOverride.php');
+    if(isset($loadFileLocation)){
+        $location = $loadFileLocation;
+    }
+}
+
+
 $PROJECTID = $_GET['PID'];
 if (!isset($PROJECTID)) {
     echo json_encode(array('status' => 'false', 'message' => 'No project ID provided'));
@@ -26,7 +39,7 @@ if (!is_string($PATH) || preg_match('/\.\./', $PATH)) {
     exit();
 }
 
-$file_path = '../projects/' . $PROJECTID . $PATH;
+$file_path = $location . $PROJECTID . $PATH;
 
 // Check if the file exists
 if (!file_exists($file_path)) {

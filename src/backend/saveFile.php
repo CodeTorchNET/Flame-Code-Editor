@@ -3,6 +3,17 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 
+
+//File location override
+$location = '../projects/';
+//check if ../../CodeTorchOverride.php exists
+if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
+    include(__DIR__ . '/../../CodeTorchOverride.php');
+    if(isset($saveFileLocation)){
+        $location = $saveFileLocation;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $file_data = file_get_contents('php://input');
     if (!isset($file_data)) {
@@ -25,12 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     //check if the file exists
-    if (!file_exists('../projects/' . $PROJECTID . $PATH)) {
+    if (!file_exists($location . $PROJECTID . $PATH)) {
         echo json_encode(array('status' => 'false', 'message' => 'File does not exist'));
         exit();
     }
 
-    file_put_contents('../projects/' . $PROJECTID . $PATH, $file_data);
+    file_put_contents($location . $PROJECTID . $PATH, $file_data);
     echo json_encode(array('status' => 'true', 'message' => 'File saved'));
 } else {
     echo json_encode(array('status' => 'false', 'message' => 'Expected POST request'));

@@ -3,6 +3,17 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 
+
+//File location override
+$location = '../projects/';
+//check if ../../CodeTorchOverride.php exists
+if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
+    include(__DIR__ . '/../../CodeTorchOverride.php');
+    if(isset($createFileLocation)){
+        $location = $createFileLocation;
+    }
+}
+
 $type = $_GET['type'];
 if ($type !== 'file' && $type !== 'folder') {
     echo json_encode(array('status' => 'false', 'message' => 'Invalid type'));
@@ -68,23 +79,23 @@ if (!is_string($fileName) || preg_match('/\.\./', $fileName)) {
 
 if ($type === 'file') {
     // Check if the file exists
-    if (file_exists('../projects/' . $PROJECTID . $PATH . $fileName)) {
+    if (file_exists($location . $PROJECTID . $PATH . $fileName)) {
         echo json_encode(array('status' => 'false', 'message' => 'File already exists'));
         exit();
     }
-    file_put_contents('../projects/' . $PROJECTID . $PATH . $fileName, $Data);
+    file_put_contents($location . $PROJECTID . $PATH . $fileName, $Data);
     // Find mime type of file
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, '../projects/' . $PROJECTID . $PATH . $fileName);
+    $mime = finfo_file($finfo, $location . $PROJECTID . $PATH . $fileName);
     finfo_close($finfo);
     echo json_encode(array('status' => 'true', 'message' => 'File saved', 'mime' => $mime));
 } else {
     // Check if the folder exists
-    if (file_exists('../projects/' . $PROJECTID . $PATH . $fileName)) {
+    if (file_exists($location . $PROJECTID . $PATH . $fileName)) {
         echo json_encode(array('status' => 'false', 'message' => 'Folder already exists'));
         exit();
     }
-    mkdir('../projects/' . $PROJECTID . $PATH . $fileName);
+    mkdir($location . $PROJECTID . $PATH . $fileName);
     echo json_encode(array('status' => 'true', 'message' => 'Folder created'));
 }
 ?>

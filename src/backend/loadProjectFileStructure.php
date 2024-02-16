@@ -4,6 +4,17 @@ header("Cache-Control: no-cache");
 header("Pragma: no-cache");
 header('Content-Type: application/json');
 
+//File location override
+$location = '/../../projects/';
+//check if ../../CodeTorchOverride.php exists
+if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
+    include(__DIR__ . '/../../CodeTorchOverride.php');
+    if(isset($loadFileStructureLocation)){
+        $location = $loadFileStructureLocation;
+    }
+}
+
+
 $PROJECTID = $_GET['PID'];
 if (!isset($PROJECTID)) {
     echo json_encode(array('status' => 'false', 'message' => 'No project ID provided'));
@@ -62,7 +73,7 @@ function listFilesRecursively($subfolder, $OGPath)
 }
 
 //check if path exists
-if (!file_exists(__DIR__ . '/../../projects/' . $PROJECTID)) {
+if (!file_exists(__DIR__ . $location . $PROJECTID)) {
     echo json_encode(array('status' => 'false', 'message' => 'Project does not exist'));
     exit();
 }

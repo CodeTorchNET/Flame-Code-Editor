@@ -1,4 +1,15 @@
 <?php
+
+//File location override
+$location = '../projects/';
+//check if ../../CodeTorchOverride.php exists
+if(file_exists(__DIR__ . '/../../CodeTorchOverride.php')){
+    include(__DIR__ . '/../../CodeTorchOverride.php');
+    if(isset($zipHandlerLocation)){
+        $location = $zipHandlerLocation;
+    }
+}
+
 // Set the input folder
 $PROJECTID = $_GET['PID'] ?? null;
 $path = $_GET['path'] ?? null;
@@ -22,8 +33,8 @@ if (!ctype_alnum($PROJECTID)) {
 $path = ltrim($path, '/'); // Remove leading slashes
 $path = preg_replace('/\.\.\//', '', $path); // Remove any ".." sequences
 
-$inputFolder = '../projects/' . $PROJECTID . '/' . $path;
-$zipFileName = 'CodeTorch-Project-1.zip';
+$inputFolder = $location . $PROJECTID . '/' . $path;
+$zipFileName = 'CodeTorch-Project.zip';
 
 //check if the input folder exists
 if (!file_exists($inputFolder)) {
