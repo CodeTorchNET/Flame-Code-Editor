@@ -78,10 +78,7 @@ if (!file_exists(__DIR__ . $location . $PROJECTID)) {
     exit();
 }
 
-$currentPath = __DIR__;
-// Remove /backend from the end of the path
-$currentPath = substr($currentPath, 0, -8);
-$currentPath = $currentPath . '/projects/' . $PROJECTID;
+$currentPath = __DIR__ . $location . $PROJECTID;
 $fileList = listFilesRecursively($currentPath,$currentPath);
 //convert to JSON
 echo json_encode(array('status'=>'true','files' => $fileList));
