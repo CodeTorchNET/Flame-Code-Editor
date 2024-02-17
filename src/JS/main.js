@@ -6,6 +6,20 @@ const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/'
 const terminalOverrideLocation = runningInCodeTorch ? '/projects/JS/terminal.js' : '/JS/terminal.js';
 const assetPathLocation = runningInCodeTorch ? '/projects/assets/' : '/assets/';
 
+
+if(runningInCodeTorch){
+    // load JS file /JS/CodeTorchFlameOverride.js
+    var script = document.createElement('script');
+    script.src = '/JS/CodeTorchFlameOverride.js';
+    document.head.appendChild(script);
+    script.onload = function() {
+        console.log('CodeTorchFlameOverride.js loaded');
+        if(typeof CodeTorchStartHandler == 'function'){
+            CodeTorchStartHandler();
+        }
+    };
+}
+
 var currentTheme = 'dark';
 var topMenuHandler = new TopBar();
 topMenuHandler.init(document.getElementById("topMenu"),assetPathLocation);
@@ -64,10 +78,14 @@ document.getElementById('toptopMenuDownload').addEventListener('click', function
 });
 
 document.getElementById('toptopMenuShare').addEventListener('click', function () {
-    Toast.fire({
-        icon: "info",
-        title: "This feature only exists at CodeTorch"
-    });
+    if(typeof CodeTorchShareHandler == 'function'){
+        CodeTorchShareHandler();
+    }else{
+        Toast.fire({
+            icon: "info",
+            title: "This feature only exists at CodeTorch"
+        });
+    }
 });
 document.getElementById('toptopMenuSettings').addEventListener('click', function () {
     Toast.fire({
@@ -77,10 +95,14 @@ document.getElementById('toptopMenuSettings').addEventListener('click', function
 });
 
 document.getElementById('seeProjectPage').addEventListener('click', function () {
-    Toast.fire({
-        icon: "info",
-        title: "This feature only exists at CodeTorch"
-    });
+    if(typeof CodeTorchOpenProjectPage == 'function'){
+        CodeTorchOpenProjectPage();
+    }else{
+        Toast.fire({
+            icon: "info",
+            title: "This feature only exists at CodeTorch"
+        });
+    }
 });
 
 document.getElementById('saveNow').style.visibility = 'hidden';
