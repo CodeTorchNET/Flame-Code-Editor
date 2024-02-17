@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Project</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="JS/preview.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="CSS/main.css">
+    <style>
+        .previewParent {
+            width: auto;
+            height: calc(100% - 41px);
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-top: 0px;
+            border-bottom-left-radius: 4px;
+            background-color: var(--main-background);
+        }
+        #preview{
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body class="light">
+    <div class="previewParent">
+        <div class="previewTopMenu"><svg id="reload" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99">
+                </path>
+            </svg><svg id="fullscreen" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15">
+                </path>
+            </svg>
+        </div>
+        <iframe id="preview"></iframe>
+    </div>
+
+    <!-- Bunch of divs so previewHandler doesn't break (To much work to fix)-->
+    <div id="terminal" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+    <div id="persistlogs" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+    <div id="clearTerminal" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+    <div class="terminalScroller" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+    <div id="errorNumber" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+    <div id="warningNumber" style="display: none;visibility: hidden;max-width: 0px;max-height: 0px;"></div>
+
+    <script>
+
+        const projectID = new URLSearchParams(window.location.search).get('id') ?? location.pathname.split('/projects/')[1].split('/editor')[0].split('/fullscreen')[0].split('/embed')[0].replaceAll('/', '');
+        if (projectID) {
+            const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('https://localhost/');
+            const APILocation = runningInCodeTorch ? '/projects/API/' : '/backend/';
+            const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/';
+            const terminalOverrideLocation = runningInCodeTorch ? '/projects/JS/terminal.js' : '/JS/terminal.js';
+            var PH = new PreviewHandler();
+            PH.init(document.getElementById("preview"), document.getElementById('terminal'), projectID,PreviewLocation,terminalOverrideLocation);
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'No project ID given.'
+            });
+        }
+        document.getElementById('reload').addEventListener('click', function () {
+            PH.reload();
+        });
+
+        document.getElementById('fullscreen').addEventListener('click', function () {
+            //check if already fullscreen
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                var elem = document.getElementsByClassName('previewParent')[0];
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { /* Firefox */
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
