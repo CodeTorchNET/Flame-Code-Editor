@@ -530,6 +530,13 @@ body {
     margin-left: 15px;
 }
 
+.toptopMenu .authorInfo .text div {
+    display: flex;
+}
+.toptopMenu .authorInfo .text div p:first-child{
+    margin:0px;font-weight: 400;margin-right: 4px;
+}
+
 .toptopMenu .authorInfo .text .name {
     margin: 0px;
 }
