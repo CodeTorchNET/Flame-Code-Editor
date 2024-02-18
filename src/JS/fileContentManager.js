@@ -32,7 +32,8 @@ class fileContentManager {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        credentials: 'include'
                     }).then(response => {
                         if (response.ok) {
                             return response.json();
@@ -68,7 +69,8 @@ class fileContentManager {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        credentials: 'include'
                     }).then(response => {
                         if (response.ok) {
                             return response.blob().then(blob => {
@@ -96,7 +98,8 @@ class fileContentManager {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        credentials: 'include'
                     }).then(response => {
                         if (response.ok) {
                             return response.json();
@@ -135,7 +138,8 @@ class fileContentManager {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        credentials: 'include'
                     }).then(response => {
                         if (response.ok) {
                             return response.json();
@@ -177,6 +181,7 @@ class fileContentManager {
                         headers: {
                             'Content-Type': 'text/plain'
                         },
+                        credentials: 'include',
                         body: content
                     }).then(response => {
                         if (response.ok) {
@@ -239,6 +244,7 @@ class fileContentManager {
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
+                                credentials: 'include',
                                 body: this._data.offloadedFiles[i].content
                             }).then(response => {
                                 if (response.ok) {
