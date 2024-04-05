@@ -1,5 +1,5 @@
 // Bunch of variables so things work with CodeTorch
-const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('https://localhost/');
+const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('http://localhost/');
 const projectID = runningInCodeTorch ? location.pathname.split('/projects/')[1].split('/editor')[0].split('/fullscreen')[0].replaceAll('/', '') : window.location.search.replaceAll('?', '');
 const APILocation = runningInCodeTorch ? '/projects/API/' : '/backend/';
 const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/';
@@ -107,10 +107,18 @@ document.getElementById('seeProjectPage').addEventListener('click', function () 
 
 document.getElementById('saveNow').style.visibility = 'hidden';
 document.getElementById('saveNow').addEventListener('click', function () {
-    Toast.fire({
-        icon: "info",
-        title: "I am honestly too tired to implement this feature right now, if you want to save the file, just press Ctrl/CMD + S",
-        text: "Or help me implement it by contributing to the project"
+    FCM.pushFileToRemote(_data.currentOpenedFile).then(function () {
+        topMenuHandler.changeState(topMenuHandler._data.activeElement, false);
+        PH.reload();
+        Toast.fire({
+            icon: "success",
+            title: "File saved"
+        });
+    }.bind(this)).catch(function (error) {
+        Toast.fire({
+            icon: "error",
+            title: "An error occured while trying to save the file."
+        });
     });
 });
 
@@ -257,6 +265,7 @@ document.getElementById("sideMenu").addEventListener('folderRenamed', function (
     });
 })
 document.getElementById("sideMenu").addEventListener('fileOpened', function (e) {
+    document.getElementById('saveNow').style.visibility = 'hidden';
     _data.currentOpenedFile = e.detail.path;
     FCM.loadFile(e.detail.path).then(function (data) {
         var type = checkType(data.MIME);
@@ -282,6 +291,10 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
             }
         });
         if (alreadyOpened) {
+            //check if file is edited if so than make savenow visible
+            if(topMenuHandler._data.crossedSVG != document.getElementById(topMenuId).children[2].innerHTML){
+                document.getElementById('saveNow').style.visibility = '';
+            }
             topMenuHandler.setActive(topMenuId, true);
         } else {
             const topMenuId = topMenuHandler.add(e.detail.name, e.detail.icon_name, false)
@@ -303,6 +316,7 @@ document.getElementById("sideMenu").addEventListener('fileOpened', function (e) 
     });
 });
 document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
+    document.getElementById('saveNow').style.visibility = 'hidden';
     //find the path
     var Id = null;
     var path = null;
@@ -326,6 +340,10 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
             editorHandler.renderError(true, data.response, path.split('/').pop());
         }
         sidebarHandler.setActive(Id);
+        //check if file is edited if so than make savenow visible
+        if(topMenuHandler._data.crossedSVG != document.getElementById(e.detail.id).children[2].innerHTML){
+            document.getElementById('saveNow').style.visibility = '';
+        }
         _data.currentOpenedFile = path;
     }).catch(function (error) {
         Toast.fire({
@@ -335,6 +353,7 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
     });
 })
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
+    document.getElementById('saveNow').style.visibility = 'hidden';
     var Id = null;
     var index = null;
     _data.filesOpened.forEach(function (element, i) {
@@ -362,6 +381,7 @@ document.getElementById('sideMenu').addEventListener('fileDeleted', function (e)
         _data.filesOpened.splice(index, 1);
         if (Id != null) {
             topMenuHandler.remove(Id);
+            document.getElementById('saveNow').style.visibility = 'hidden';
             _data.currentOpenedFile = null;
             editorHandler.renderWelcome();
         }
@@ -431,6 +451,7 @@ document.getElementById('newFile').addEventListener('click', function () {
     }
 });
 document.getElementById('sideMenu').addEventListener('fileAdded', function (e) {
+    document.getElementById('saveNow').style.visibility = 'hidden';
     Path = '/' + e.detail.path.join('/');
     if (Path[Path.length - 1] != '/') {
         Path += '/';
