@@ -162,6 +162,7 @@ document.addEventListener('keydown', function (event) {
                     icon: "success",
                     title: "File saved"
                 });
+                document.getElementById('saveNow').style.visibility = 'hidden';
             }.bind(this)).catch(function (error) {
                 Toast.fire({
                     icon: "error",
