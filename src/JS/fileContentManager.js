@@ -28,7 +28,7 @@ class fileContentManager {
             this.loadFileStructure = function () {
                 return new Promise((resolve, reject) => {
                     // Load the file structure from the remote
-                    fetch(this._data.APILocation+'loadProjectFileStructure.php?PID=' + this._data.projectID, {
+                    fetch(this._data.APILocation + 'loadProjectFileStructure.php?PID=' + this._data.projectID, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ class fileContentManager {
                 }
                 // Load the file from the remote
                 return new Promise((resolve, reject) => {
-                    fetch(this._data.APILocation+'loadFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                    fetch(this._data.APILocation + 'loadFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -80,12 +80,25 @@ class fileContentManager {
                             throw new Error('Failed to load file');
                         }
                     }).then(data => {
-                        this._data.offloadedFiles.push({ path: file, content: data.response, MIME: data.MIME, syncedWithRemote: true })
+                        this._data.offloadedFiles.push({ path: file, _remoteFile: data.response, content: data.response, MIME: data.MIME, syncedWithRemote: true })
                         resolve(data);
                     }).catch(error => {
                         console.error('Error:', error);
                         reject(error);
                     });
+                });
+            },
+            this.revertBackToRemote = function (file) {
+                return new Promise((resolve, reject) => {
+                    // Revert the file back to the remote
+                    for (var i = 0; i < this._data.offloadedFiles.length; i++) {
+                        if (this._data.offloadedFiles[i].path == file) {
+                            this._data.offloadedFiles[i].content = this._data.offloadedFiles[i]._remoteFile;
+                            this._data.offloadedFiles[i].syncedWithRemote = true;
+                            resolve();
+                        }
+                    }
+                    reject("File not found");
                 });
             },
             this.renameFile = function (PATH, oldName, newName, type = 'file') {//file/folder
@@ -94,7 +107,7 @@ class fileContentManager {
                     if (typeof PATH == "undefined" || typeof oldName == "undefined" || typeof newName == "undefined") {
                         reject("Invalid parameters");
                     }
-                    fetch(this._data.APILocation+'renameFile.php?PID=' + this._data.projectID + '&PATH=' + PATH + '&ON=' + oldName + '&NN=' + newName, {
+                    fetch(this._data.APILocation + 'renameFile.php?PID=' + this._data.projectID + '&PATH=' + PATH + '&ON=' + oldName + '&NN=' + newName, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -134,7 +147,7 @@ class fileContentManager {
                     if (file == '') {
                         reject("Invalid file");
                     }
-                    fetch(this._data.APILocation+'deleteFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                    fetch(this._data.APILocation + 'deleteFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -176,7 +189,7 @@ class fileContentManager {
                     if (type != "file" && type != "folder") {
                         reject("Invalid type");
                     }
-                    fetch(this._data.APILocation+'createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
+                    fetch(this._data.APILocation + 'createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'text/plain'
@@ -218,7 +231,7 @@ class fileContentManager {
             this.zipHandler = function (path) {
                 return new Promise((resolve, reject) => {
                     //open zip link in new tab
-                    window.open(this._data.APILocation+'zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');
+                    window.open(this._data.APILocation + 'zipHandler.php?PID=' + this._data.projectID + '&path=' + path, '_blank');
                     resolve();
                 });
             }
@@ -239,7 +252,7 @@ class fileContentManager {
                     for (var i = 0; i < this._data.offloadedFiles.length; i++) {
                         if (this._data.offloadedFiles[i].path == file) {
                             const increment = i;
-                            fetch(this._data.APILocation+'saveFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
+                            fetch(this._data.APILocation + 'saveFile.php?PID=' + this._data.projectID + '&PATH=' + file, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'

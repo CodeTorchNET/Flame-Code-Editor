@@ -353,6 +353,30 @@ document.getElementById('topMenu').addEventListener('tabChanged', function (e) {
         });
     });
 })
+
+document.getElementById('topMenu').addEventListener('askForSave', function (e) {
+    Swal.fire({ 
+        title: 'Do you want to save the changes made to the file?',
+        text: 'If you don\'t save the changes will be lost',
+        icon: 'question',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Save",
+        denyButtonText: `Don't save`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            FCM.pushFileToRemote(_data.currentOpenedFile).then(function () {    
+                e.detail.callback(e.detail.ParentThis);
+            });
+        }else if(result.isDismissed){
+            console.log('canceled');
+         }else{
+            FCM.revertBackToRemote(_data.currentOpenedFile).then(function () {
+                e.detail.callback(e.detail.ParentThis);
+            });
+        }
+    });
+});                
 document.getElementById('topMenu').addEventListener('tabClosed', function (e) {
     document.getElementById('saveNow').style.visibility = 'hidden';
     var Id = null;

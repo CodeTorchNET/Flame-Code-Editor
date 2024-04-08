@@ -68,14 +68,15 @@ class TopBar {
                 const target = ParentThis._data.target;
                 const editedSVG = ParentThis._data.editedSVG;
                 const crossedSVG = ParentThis._data.crossedSVG;
-                i.addEventListener('click', function () {
+                /*i.addEventListener('click', function () {
+                    console.log('attempting to close tab');
                     //check if current tab is active
                     if (element.classList.contains("active")) {
                         calculateNextActive(ParentThis);
                     }
                     element.remove();
                     target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
-                });
+                });*/
                 /*i.addEventListener('mouseout', function () {
                     if (element.getAttribute('edited') == "true") {
                         i.innerHTML = editedSVG;
@@ -88,20 +89,31 @@ class TopBar {
                     }
                 });
                 i.addEventListener('mouseup', function () {
-                    //check if current tab is active
-                    if (element.classList.contains("active")) {
-                        calculateNextActive(ParentThis);
+                    //check if was edited
+                    ParentThis = ParentThis;
+                    function internal(ParentThis){
+                        //check if current tab is active
+                        if (element.classList.contains("active")) {
+                            calculateNextActive(ParentThis);
+                        }
+                        element.remove();
+                        target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
                     }
-                    element.remove();
-                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
+                    if (element.getAttribute('edited') == "true") {
+                        i.innerHTML = editedSVG;
+                        target.dispatchEvent(new CustomEvent('askForSave', { detail: { id: element.id, callback: internal,ParentThis:ParentThis} }));
+                    }else{
+                        internal(ParentThis);
+                    }
                 });
             }
             internalEvents(this);
             element.appendChild(i);
             element.id = 'TopBarTab' + this._data.currID;
-            element.addEventListener('click', function () {
+            /*element.addEventListener('click', function () {
+                console.log(element.id)
                 this.setActive(element.id);
-            }.bind(this));
+            }.bind(this));*/
             element.addEventListener('mouseover', function (event) {
                 if(element.getAttribute("eventFix") == 'true'){
                     element.setAttribute("eventFix",'');
