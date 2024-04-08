@@ -60,7 +60,7 @@
 
         const projectID = new URLSearchParams(window.location.search).get('id') ?? location.pathname.split('/projects/')[1].split('/editor')[0].split('/fullscreen')[0].split('/embed')[0].replaceAll('/', '');
         if (projectID) {
-            const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('https://localhost/');
+            const runningInCodeTorch = document.location.href.includes('codetorch') || document.location.href.includes('http://localhost/');
             const APILocation = runningInCodeTorch ? '/projects/API/' : '/backend/';
             const PreviewLocation = runningInCodeTorch ? '/projects/preview/' : '/projects/';
             const terminalOverrideLocation = runningInCodeTorch ? '/projects/JS/terminal.js' : '/JS/terminal.js';
