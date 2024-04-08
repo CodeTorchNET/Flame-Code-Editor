@@ -4,7 +4,7 @@
  */
 class TopBar {
     constructor() {
-        this.init = function (el,assetPath = '/assets/') {
+        this.init = function (el, assetPath = '/assets/') {
             if (typeof el == "undefined") {
                 throw new Error("No element provided")
             } else if (typeof el == 'object') {
@@ -31,7 +31,7 @@ class TopBar {
             if (this._data.filesKnown.indexOf(icon_name) != -1) {
                 icon.src = this._data.assetPath + this._data.fileIcons[icon_name];
             } else {
-                icon.src = this._data.assetPath+"text.svg";
+                icon.src = this._data.assetPath + "text.svg";
             }
             icon.className = "icon";
             element.appendChild(icon);
@@ -68,27 +68,26 @@ class TopBar {
                 const target = ParentThis._data.target;
                 const editedSVG = ParentThis._data.editedSVG;
                 const crossedSVG = ParentThis._data.crossedSVG;
-                i.children[0].addEventListener("click", function () {
+                i.addEventListener('click', function () {
                     //check if current tab is active
                     if (element.classList.contains("active")) {
                         calculateNextActive(ParentThis);
                     }
                     element.remove();
                     target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: element.id } }));
-                })
-                i.children[0].addEventListener('mouseover', function () {
-                    if (element.getAttribute('edited') == "true") {
-                        i.innerHTML = crossedSVG;
-                        internalEvents(ParentThis);
-                    }
                 });
-                i.children[0].addEventListener('mouseout', function () {
+                /*i.addEventListener('mouseout', function () {
                     if (element.getAttribute('edited') == "true") {
                         i.innerHTML = editedSVG;
-                        internalEvents(ParentThis);
+                    }
+                });*/
+                i.addEventListener('mouseover', function () {
+                    element.setAttribute("eventFix",'true');
+                    if (element.getAttribute('edited') == "true") {
+                        i.innerHTML = crossedSVG;
                     }
                 });
-                i.children[0].addEventListener('mouseup', function () {
+                i.addEventListener('mouseup', function () {
                     //check if current tab is active
                     if (element.classList.contains("active")) {
                         calculateNextActive(ParentThis);
@@ -103,29 +102,37 @@ class TopBar {
             element.addEventListener('click', function () {
                 this.setActive(element.id);
             }.bind(this));
-            element.addEventListener('mouseover', function () {
+            element.addEventListener('mouseover', function (event) {
+                if(element.getAttribute("eventFix") == 'true'){
+                    element.setAttribute("eventFix",'');
+                }else{
+                    if(element.getAttribute('edited') == "true"){
+                        i.innerHTML = this._data.editedSVG;
+                    }
+                }
                 //check if active
                 if (!(element.classList.contains("active"))) {
                     i.style.visibility = "visible";
                 }
-            })
+            }.bind(this));
             element.addEventListener('mouseout', function () {
                 if (!(element.classList.contains("active"))) {
                     i.style.visibility = "hidden";
+
                 }
-            })
+            });
             this._data.currID++;
             this._data.target.appendChild(element);
             //if active doesn't exist than set this tab as active
             if (this._data.activeElement == null) {
-                this.setActive(element.id,true);
+                this.setActive(element.id, true);
             } else {
                 i.style.visibility = "hidden";
             }
             return element.id;
 
         }
-        this.setActive = function (id,override = false) {
+        this.setActive = function (id, override = false) {
             if (this._data.activeElement != null) {
                 this._data.target.children[this._data.activeElement].classList.remove("active");
                 this._data.target.children[this._data.activeElement].children[2].style.visibility = "hidden";
@@ -133,82 +140,29 @@ class TopBar {
             this._data.target.children[id].classList.add("active");
             this._data.target.children[id].children[2].style.visibility = "visible";
             this._data.activeElement = id;
-            if(!override){
-            this._data.target.dispatchEvent(new CustomEvent('tabChanged', { detail: { id: id } }));
+            if (!override) {
+                this._data.target.dispatchEvent(new CustomEvent('tabChanged', { detail: { id: id } }));
             }
         },
-        this.remove = function (id) {
-            //check if was active
-            if (this._data.activeElement == id) {
-                this._data.activeElement = null;
-            }
-            this._data.target.children[id].remove();
-        },
-        this.changeState = function (id, edited) {
-            var target = this._data.target;
-            function internalEvents(ParentThis) {
-                const target = ParentThis._data.target;
-                const editedSVG = ParentThis._data.editedSVG;
-                const crossedSVG = ParentThis._data.crossedSVG;
-                target.children[id].children[2].children[0].addEventListener("click", function () {
-                    //check if current tab is active
-                    if (target.children[id].classList.contains("active")) {
-                        calculateNextActive(ParentThis);
-                    }
-                    target.children[id].remove();
-                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: target.children[id].id } }));
-                })
-                target.children[id].children[2].children[0].addEventListener('mouseover', function () {
-                    if (target.children[id].getAttribute('edited') == "true") {
-                        target.children[id].children[2].innerHTML = crossedSVG;
-                        internalEvents(ParentThis);
-                    }
-                });
-                target.children[id].children[2].children[0].addEventListener('mouseout', function () {
-                    if(target.children[id] != null){
-                    if (target.children[id].getAttribute('edited') == "true") {
-                        target.children[id].children[2].innerHTML = editedSVG;
-                        internalEvents(ParentThis);
-                    }
+            this.remove = function (id) {
+                //check if was active
+                if (this._data.activeElement == id) {
+                    this._data.activeElement = null;
                 }
-                });
-                target.children[id].children[2].children[0].addEventListener('mouseup', function () {
-                    //check if current tab is active
-                    if (target.children[id].classList.contains("active")) {
-                        calculateNextActive(ParentThis);
-                    }
-                    target.dispatchEvent(new CustomEvent('tabClosed', { detail: { id: target.children[id].id } }));
-                    target.children[id].remove();
-                });
-            }
-            function calculateNextActive(ParentThis) {
-                //calculate next active element
-                var nextActive = null;
-                if (target.children[id].nextSibling != null) {
-                    nextActive = target.children[id].nextSibling;
-                } else if (target.children[id].previousSibling != null) {
-                    nextActive = target.children[id].previousSibling;
-                }
-                //set next active element
-                if (nextActive != null && (nextActive.id != undefined && nextActive.id.includes("Tab"))) {
-                    ParentThis.setActive(nextActive.id);
+                this._data.target.children[id].remove();
+            },
+            this.changeState = function (id, edited) {
+                if (edited) {
+                    this._data.target.children[id].setAttribute('edited', "true");
+                    this._data.target.children[id].children[2].innerHTML = this._data.editedSVG;
                 } else {
-                    ParentThis._data.activeElement = null;
+                    this._data.target.children[id].setAttribute('edited', "false");
+                    this._data.target.children[id].children[2].innerHTML = this._data.crossedSVG;
                 }
+            },
+            this.rename = function (id, newName) {
+                this._data.target.children[id].children[1].innerHTML = newName;
             }
-            if (edited) {
-                this._data.target.children[id].setAttribute('edited', "true");
-                this._data.target.children[id].children[2].innerHTML = this._data.editedSVG;
-                internalEvents(this);
-            } else {
-                this._data.target.children[id].setAttribute('edited', "false");
-                this._data.target.children[id].children[2].innerHTML = this._data.crossedSVG;
-                internalEvents(this);
-            }
-        },
-        this.rename = function (id, newName) {
-            this._data.target.children[id].children[1].innerHTML = newName;
-        }
         //internal data
         this._data = {
             filesKnown: ['js', 'html', "css", "jsx", 'pdf', "eps", "ttf", "otf", "woff", "woff2", "eot", "json", 'md', 'png', 'svg', 'vue', 'jpeg', 'jpg', 'ico', 'gif', 'bmp', 'tiff', 'tif', 'mp3', 'wav', 'flac', 'aac', 'ogg'],//add zip,video formats
