@@ -148,7 +148,7 @@ body {
 
 .terminalScroller {
     height: calc(100% - 20px);
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 20px;
     padding-top: 0px;
     padding-bottom: 0px;

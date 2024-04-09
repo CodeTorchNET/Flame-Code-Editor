@@ -2,7 +2,7 @@
   height: 36px;
   background-color: var(--main-background-border);
   display: flex;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   border-bottom: 1px var(--border) solid;
   width: 100%;
