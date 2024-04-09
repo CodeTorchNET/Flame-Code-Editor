@@ -8,6 +8,7 @@ class TopBar {
             if (typeof el == "undefined") {
                 throw new Error("No element provided")
             } else if (typeof el == 'object') {
+                document.getElementById('topMenu').style.maxWidth = (parseFloat( window.getComputedStyle(document.body).getPropertyValue('width').replaceAll('px','')) - parseFloat( window.getComputedStyle(document.getElementsByClassName('sideMenu')[0]).getPropertyValue('width').replaceAll('px','')) - 40)+ 'px' //temp fix
                 new Sortable(el, {
                     animation: 150,
                     draggable: ".Tab",
