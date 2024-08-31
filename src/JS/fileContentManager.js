@@ -192,7 +192,7 @@ class fileContentManager {
                     fetch(this._data.APILocation + 'createFile.php?PID=' + this._data.projectID + '&path=' + path + '&name=' + name + '&type=' + type, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'text/plain'
+                            'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         credentials: 'include',
                         body: content
